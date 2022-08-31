@@ -110,9 +110,9 @@ int main(int argc, char** argv) {
 		printf("  n=%d: %lf ns\n", sizes[i], ns);
 	}
 
-	printf("\nTesting search (m=10) in an array...\n");
+	printf("\nTesting search (m=100) in an array...\n");
 	for(int i = 0; i < sizeof(sizes) / sizeof(int); i++) {
-		double ns = search(sizes[i], 10);
+		double ns = search(sizes[i], 100);
 		printf("  n=%d: %lf ns\n", sizes[i], ns);
 	}
 
