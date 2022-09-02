@@ -27,6 +27,123 @@
 
 \section*{Introduction}
 
-This is a report for the second assignment in the course ID1021 Algorithms and Data Structures. In this assignment,
+This is a report for the second assignment in the course ID1021 Algorithms and Data Structures. In this assignment, a simple RPN calculator should be implemented that makes use of a stack to keep track of intermediate results.
+
+The implementation was done in C++ and was compiled with GCC using the {\tt -O0} parameter to ensure the compiler doesn't optimize away any part of the code.
+
+The source code can be found at: \href{https://github.com/HannesMann/ID1021/tree/main/src/calc}{GitHub}.
+
+\section*{The calculator}
+
+The RPN calculator works by storing ''items'' that are part of a math expression that should be calculated. These can either be numbers, or they can be an operation such as \emph{add} or \emph{divide}.
+
+When a number is encountered it is pushed on to the top of the stack. When an operation is encountered it pops the two numbers off the top of the stack and pushes a new number that is the result of that operation.
+
+The stack can grow very large with complex expressions. Because of this two different strategies were implemented to fit the expression on the stack.
+
+\section*{Example of calculator output}
+
+Random expressions are generated from templates every time the program is run to test the calculator.
+
+\begin{minted}{cpp}
+Testing RPN calculator...
+  Calculating expression with fixed stack: ( 2 3 + 2 - )
+  Result: 3
+
+  Calculating expression with fixed stack: ( 3 3 + 4 - )
+  Result: 2
+
+  Calculating expression with fixed stack: ( 3 4 + 4 - )
+  Result: 3
+
+  Calculating expression with fixed stack: ( 5 2 * 2 / 2 + )
+  Result: 7
+
+  Calculating expression with fixed stack: ( 3 5 5 * * )
+  Result: 75
+\end{minted}
+
+\section*{Stack strategies}
+
+\subsection*{Fixed stack}
+
+This stack is very simple, it works by allocating a fixed number of slots at creation time and then keeping track of a \emph{stack pointer} to know where the top of the stack is currently located. If the user pushes more items on the stack than there are available slots the program will exit with an error.
+
+Because this stack is unable to grow the calculator has to optimize for the worst-case scenario by allocating the same number of slots as there are operations. A correct expression will at most require $n/2 + 1$ slots, but the user could give an incomplete expression of the form $(x_1 x_2 x_3 \ldots x_n)$.
+
+\subsection*{Dynamic stack}
+
+This stack works by dynamically growing and shrinking the stack as the user pushes and pops items. The inital stack size is $4$, and once this has been exceeded the stack will double the amount of slots available. This means the size grows to $8, 16, 32, 64, 128, 256, \ldots$ as the user pushes more items.
+
+The same method is used to shrink the stack. When the number of items fits in half of the available slots, the stack size is halved. The stack has a minimum size of $4$.
+
+\subsection*{Benchmarks}
+
+The stacks were compared by creating large expressions that stress the stack. These expressions take the form of $(x_1 x_2 x_3 \ldots x_n \ op_1 op_2 op_3 \ldots op_n)$ where $op$ is a random operation (division is not included since this could result in a divide-by-zero error).
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{n} & \textbf{fixed} & \textbf{dynamic} \\
+\hline
+	10000 & 0.54 ms & 0.86 ms \\
+	50000 & 2.0 ms & 4.1 ms \\
+	100000 & 8.1 ms & 8.3 ms \\
+	200000 & 16.0 ms & 17.0 ms \\
+	300000 & 24.0 ms & 25.0 ms \\
+	400000 & 33.0 ms & 33.0 ms \\
+	500000 & 41.0 ms & 41.0 ms \\
+\hline
+\end{tabular}
+\caption{Execution time for calculation of the same random expression with $n$ operations.}
+\label{tab:table1}
+\end{table}
+
+As can be seen in table 1, the execution time was only noticeably differently when $n$ is small. The dynamic stack uses the \mintinline{cpp}{realloc} function to grow the stack,
+and when the stack is large enough memory has probably been allocated by the process already so growing the stack is simple. If the dynamic stack was written in a different language
+(that was less optimized) the results could have been different.
+
+\section*{Calculating the last digit in a personal number}
+
+Swedish personal numbers include a checksum as their last digit that can be used to verify if the number is valid or not. By adding some operations to the RPN calculator we can calculate this last digit.
+
+\begin{itemize}
+	\item $x$ mod10: Takes modulo 10 of $n$.
+	\item \emph{$x *' y$}: Multiplies $x$ and $y$. If the result is larger than 10, the first and second digit are added together as the final result.
+\end{itemize}
+
+When we have these operations the expression for calculating the last digit looks like this:
+\begin{equation*}
+(10 \ x_1 *' 2 \ x_2 \ x_3 *' 2 \ x_4 \ldots x_9 *' 2 \ + \ + \ + \ + \ + \ + \ + \ + \ mod10 \ -)
+\end{equation*}
+
+Testing the calculator on a randomly generated personal number gives this output:
+\begin{minted}[fontsize=\footnotesize]{text}
+Calculating last digit of personal number 0101010346...
+  Calculating expression with fixed stack:
+  ( 10 0 2 *' 1 0 2 *' 1 0 2 *' 1 0 2 *' 3 4 2 *' + + + + + + + + mod10 - )
+
+  Last digit: 6
+\end{minted}
+
+\section*{Conclusion}
+
+\subsection*{The calculator}
+
+Implementing an RPN calculator was very straightforward and it's definitely understandable why early calculators used this method. There's no need to deal with parentheses or complex parsing.
+
+Error checking is very simple and is done with \mintinline{cpp}{assert} which means the whole program will exit when the user exceeds the bounds of the stack or divides by zero. On a real calculator a different strategy is needed.
+
+\subsection*{The stack}
+
+Implementing the stack was also fairly straightforward. I chose to keep the stack pointer at the very top of the stack, pointing to the last available element. This means that when the stack is empty the stack pointer is -1, when there is one element the pointer is 0 and so on.
+
+The dynamic stack strategy seems to have worked out really well but some improvements could be made.
+If the user pushes 256 items and then repeatedly pops and pushes the stack will reallocate itself on every operation.
+This obviously isn't optimal and a better strategy would be to wait longer until the stack shrinks again.
+
+It might also be worth investigating how much the dynamic stack benefits from using the C standard library and if it would run slower if the stack was implemented using a manual \mintinline{cpp}{malloc}+\mintinline{cpp}{memcpy}.
+It's possible that \mintinline{cpp}{realloc} is smart enough on its own that it doesn't matter what strategy is used to grow and shrink the stack.
 
 \end{document}
