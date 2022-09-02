@@ -105,19 +105,19 @@ int main(int argc, char** argv) {
 	srand(time_ns());
 
 	printf("\nTesting random access in array of size n...\n");
-	for(int i = 0; i < sizeof(sizes) / sizeof(int); i++) {
+	for(unsigned long i = 0; i < sizeof(sizes) / sizeof(int); i++) {
 		double ns = random_access(sizes[i]);
 		printf("  n=%d: %lf ns\n", sizes[i], ns);
 	}
 
 	printf("\nTesting search (m=100) in an array...\n");
-	for(int i = 0; i < sizeof(sizes) / sizeof(int); i++) {
+	for(unsigned long i = 0; i < sizeof(sizes) / sizeof(int); i++) {
 		double ns = search(sizes[i], 100);
 		printf("  n=%d: %lf ns\n", sizes[i], ns);
 	}
 
 	printf("\nTesting search (m=n) for duplicates in an array...\n");
-	for(int i = 0; i < sizeof(sizes) / sizeof(int); i++) {
+	for(unsigned long i = 0; i < sizeof(sizes) / sizeof(int); i++) {
 		double ns = search(sizes[i], sizes[i]);
 		printf("  n=%d: %lf ns\n", sizes[i], ns);
 	}
