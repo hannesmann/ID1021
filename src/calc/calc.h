@@ -8,7 +8,7 @@
 class RPNCalculator {
 public:
 	RPNCalculator(Item* expression, size_t count, bool dynamic_stack);
-	int run();
+	int run(bool print_expression);
 private:
 	void step();
 

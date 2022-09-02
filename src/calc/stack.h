@@ -7,8 +7,8 @@ class Stack {
 public:
 	virtual ~Stack() {}
 
- 	virtual int pop() = 0;
 	virtual void push(int value) = 0;
+ 	virtual int pop() = 0;
 
 	virtual const char* describe() = 0;
 };
@@ -19,8 +19,8 @@ public:
 	FixedStack(int n);
 	~FixedStack() override { free(m_stack); }
 
- 	int pop() override;
 	void push(int value) override;
+ 	int pop() override;
 
 	const char* describe() override { return "fixed stack"; }
 private:
@@ -37,8 +37,8 @@ public:
 	DynamicStack();
 	~DynamicStack() override { free(m_stack); }
 
- 	int pop() override;
 	void push(int value) override;
+ 	int pop() override;
 
 	const char* describe() override { return "dynamic stack"; }
 private:
