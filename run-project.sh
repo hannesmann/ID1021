@@ -1,7 +1,7 @@
 #!/bin/bash
 # Run with ./run-project.sh [project]
 
-GCC_ARGS="-std=c++14 -O0 -g"
+GCC_ARGS="-std=c++17 -O0 -g"
 
 mkdir -p bin
 mkdir -p bin/objects
@@ -10,7 +10,7 @@ echo "Available:"
 
 echo "  intro"
 function intro {
-	g++ src/intro.cpp -o bin/intro $GCC_ARGS $1 $2 $3 $4 $5
+	g++ src/intro/main.cpp -o bin/intro $GCC_ARGS $1 $2 $3 $4 $5
 
 	bin/intro
 }
@@ -24,6 +24,16 @@ function calc {
 	g++ bin/objects/main.o bin/objects/stack.o bin/objects/calc.o -o bin/calc
 
 	bin/calc
+}
+
+echo "  binary_search"
+function binary_search {
+	g++ -c src/binary_search/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
+	g++ -c src/binary_search/search.cpp -o bin/objects/search.o $GCC_ARGS $1 $2 $3 $4 $5
+
+	g++ bin/objects/main.o bin/objects/search.o -o bin/binary_search
+
+	bin/binary_search
 }
 
 echo ""
