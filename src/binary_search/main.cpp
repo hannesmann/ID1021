@@ -25,8 +25,8 @@ void fill_array_with_sorted_data(int* data, int n) {
 
 /* Receives a function b = F(key, array, size). */
 void benchmark_search(std::function<bool(int, int*, int)> f) {
-	/* 2^14..2^23 */
-	for(int i = 14; i < 24; i++) {
+	/* 2^2..2^23 */
+	for(int i = 2; i < 24; i++) {
 		int n = 1 << i;
 
 		/* A sorted array is always used, but the algorithm only assumes the array is sorted if assume_sorted==true */
@@ -40,7 +40,7 @@ void benchmark_search(std::function<bool(int, int*, int)> f) {
 			f(key, array, n);
 		}
 
-		printf("  n=%d: %lf ns\n", n, (time_ns() - tstart) / 250.0);
+		printf("  n=2^%d: %lf ns\n", i, (time_ns() - tstart) / 250.0);
 		delete[] array;
 	}
 }

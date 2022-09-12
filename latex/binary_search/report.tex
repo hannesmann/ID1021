@@ -1,0 +1,202 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+
+\usepackage{float}
+
+\usepackage{tikz}
+
+\usepackage{amsmath}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest, scaled y ticks=false}
+
+\begin{document}
+
+\title{
+    \textbf{Searching in a sorted array}
+}
+\author{Hannes Mann}
+\date{2022-09-11}
+
+\maketitle
+
+\section*{Introduction}
+
+This is a report for the third assignment in the course ID1021 Algorithms and Data Structures. In this assignment, the impact of sorted data on various search algorithms was investigated.
+
+The implementation was done in C++ and was compiled with GCC using the {\tt -O0} parameter to ensure the compiler doesn't optimize away any part of the code.
+
+The source code can be found at: \href{https://github.com/HannesMann/ID1021/tree/main/src/binary_search}{GitHub}.
+
+\section*{Searching through an array}
+
+\subsection*{Linear search}
+
+There are many different methods that can be used to search for a key in an array. The most straightforward way is linear search, which is a simple algorithm that compares every single element from $0 \dots n$ in the array.
+
+If we know that the array is sorted we can apply a simple optimization to this algorithm, by breaking out of the search if the element that was encountered is larger than the specified key.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{n} & \textbf{naive} & \textbf{optimized} \\
+\hline
+	$2^{14}$ & 12.4 $\mu$s & 8.92 $\mu$s \\
+	$2^{15}$ & 24.2 $\mu$s & 18.2 $\mu$s \\
+	$2^{16}$ & 49.4 $\mu$s & 36.8 $\mu$s \\
+	$2^{17}$ & 98.2 $\mu$s & 73.3 $\mu$s \\
+	$2^{18}$ & 200 $\mu$s & 146 $\mu$s \\
+	$2^{19}$ & 384 $\mu$s & 299 $\mu$s \\
+	$2^{20}$ & 807 $\mu$s & 562 $\mu$s \\
+	$2^{21}$ & 1618 $\mu$s & 1100 $\mu$s \\
+	$2^{22}$ & 3267 $\mu$s & 2230 $\mu$s \\
+	$2^{23}$ & 6363 $\mu$s & 4430 $\mu$s \\
+\hline
+\end{tabular}
+\caption{Execution time for linear search on a randomized array of size $n$.}
+\label{tab:table1}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}
+[
+	xlabel={n},
+	ylabel={t},
+	grid,
+	xmin=16384,
+	xmax=8388608,
+	ymin=8.92,
+	ymax=6363,
+	y label style={rotate=-90},
+	legend style={at={(0,1)},anchor=north west}
+]
+\addplot[red, no marks, densely dashed] table[col sep=comma]{plot1-1.csv};
+\addlegendentry{naive}
+\addplot[blue, no marks, densely dashed] table[col sep=comma]{plot1-2.csv};
+\addlegendentry{optimized}
+\end{axis}
+\end{tikzpicture}
+\end{table}
+
+As can be seen from the graph it's clear that both versions of the linear search are an $O(n)$ operation.
+They start off very similarly, but as we add more data to the array there's a higher chance that the ''optimized'' algorithm will be able to exit early.
+
+Estimating the execution time is very simple and is done by summing the test results together and dividing by $x_1 + x_2 + \dots + x_n$.
+
+\begin{itemize}
+\item \textbf{naive}: Approximately $0.765n$ $ns$.
+\item \textbf{optimized}: Approximately $0.531n$ $ns$.
+\end{itemize}
+
+For example, if we want to know how long the ''optimized'' algorithm will take to search through a million entries of a randomized array, we calculate $t \approx 1000000 * 0.531 = 531 \mu s$.
+
+\subsection*{Binary search}
+
+If we know that the array is sorted we can use a different method to search through the array called binary search.
+
+This algorithm works by jumping to the middle of the array and checking if the value is bigger, smaller or equal to the key.
+Obviously, if the key is equal the algorithm exits, but if the key is bigger or smaller then one half of the array can be ignored (we know it only contains bigger or smaller values than the key). It repeats this process until there are no viable candidates left in the array.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{n} & \textbf{binary search} \\
+\hline
+	$2^{2}$ & 43 ns \\
+	$2^{4}$ & 55 ns \\
+	$2^{6}$ & 81 ns \\
+	$2^{8}$ & 90 ns \\
+	$2^{10}$ & 92 ns \\
+	$2^{12}$ & 102 ns \\
+	$2^{14}$ & 115 ns \\
+	$2^{16}$ & 133 ns \\
+	$2^{18}$ & 183 ns \\
+	$2^{20}$ & 196 ns \\
+\hline
+\end{tabular}
+\caption{Execution time for binary search on a randomized array of size $n$.}
+\label{tab:table2}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}
+[
+	xlabel={n},
+	ylabel={t},
+	grid,
+	xmin=4,
+	xmax=1048576,
+	ymin=43,
+	ymax=250,
+	y label style={rotate=-90},
+	legend style={at={(0,1)},anchor=north west}
+]
+\addplot[red, no marks, densely dashed] table[col sep=comma]{plot2.csv};
+\addlegendentry{binary search}
+\end{axis}
+\end{tikzpicture}
+\end{table}
+
+As can be seen, binary search is obviously a lot faster than linear search. The graph is harder to read than the one for linear search, but it roughly resembles the function $\log n$. The average complexity is $O(\log n)$ which gives us a rough approximation of $t \approx 15 \ln n$ $ns$.
+
+\section*{Searching for duplicates in an array}
+
+We can use the algorithms mentioned earlier to search for duplicates in an array, by setting the number of keys to equal the number of values.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{n} & \textbf{linear search} & \textbf{binary search} \\
+\hline
+	100 & 10.6 $\mu$s & 4.61 $\mu$s \\
+	500 & 205 $\mu$s & 31.7 $\mu$s \\
+	1000 & 790 $\mu$s & 72.9 $\mu$s \\
+	2000 & 3110 $\mu$s & 149 $\mu$s \\
+	3000 & 6950 $\mu$s & 215 $\mu$s \\
+	4000 & 12300 $\mu$s & 284 $\mu$s \\
+	5000 & 21100 $\mu$s & 348 $\mu$s \\
+\hline
+\end{tabular}
+\caption{Execution time searching for duplicates on a randomized array of size $n$.}
+\label{tab:table3}
+\end{table}
+
+Binary search is still faster but the difference isn't quite as drastic as when searching for a single key. This is because searching for $n$ keys is an $O(n)$ operation, which gives us the average complexity $O(n^2)$ for linear search and $O(n \log n)$ for binary search.
+
+When searching for duplicates we can take advantage of the fact that we have a sorted array and implement a ''smart'' algorithm that takes this into account.
+The algorithm works by only advancing in one of the arrays depending on which of them have the larger value at the current position. If the element in the second list is smaller than the corresponding element in the first list, advance in the second list, otherwise advance in the first list.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{n} & \textbf{linear search} & \textbf{binary search} & \textbf{''smart'' search} \\
+\hline
+	100 & 10.6 $\mu$s & 4.61 $\mu$s & 0.586 $\mu$s  \\
+	500 & 205 $\mu$s & 31.7 $\mu$s & 2.87 $\mu$s \\
+	1000 & 790 $\mu$s & 72.9 $\mu$s & 5.67 $\mu$s \\
+	2000 & 3110 $\mu$s & 149 $\mu$s & 11.4 $\mu$s \\
+	3000 & 6950 $\mu$s & 215 $\mu$s & 17.5 $\mu$s \\
+	4000 & 12300 $\mu$s & 284 $\mu$s & 23.3 $\mu$s \\
+	5000 & 21100 $\mu$s & 348 $\mu$s & 28.9 $\mu$s \\
+\hline
+\end{tabular}
+\caption{Execution time searching for duplicates on a randomized array of size $n$.}
+\label{tab:table4}
+\end{table}
+
+Obviously, the ''smart'' algorithm wins out over all the others. If you have sorted data there are a lot of assumptions that can be made to search through the data faster.
+
+\end{document}
