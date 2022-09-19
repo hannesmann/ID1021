@@ -36,6 +36,16 @@ function binary_search {
 	bin/binary_search
 }
 
+echo "  sort"
+function sort {
+	g++ -c src/sort/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
+	g++ -c src/sort/algorithms.cpp -o bin/objects/algorithms.o $GCC_ARGS $1 $2 $3 $4 $5
+
+	g++ bin/objects/main.o bin/objects/algorithms.o -o bin/sort
+
+	bin/sort
+}
+
 echo ""
 echo "Trying to build and run $1"
 echo ""

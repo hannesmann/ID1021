@@ -1,0 +1,195 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+
+\usepackage{float}
+
+\usepackage{tikz}
+
+\usepackage{amsmath}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest, scaled y ticks=false}
+
+\begin{document}
+
+\title{
+    \textbf{Sorting algorithms}
+}
+\author{Hannes Mann}
+\date{2022-09-19}
+
+\maketitle
+
+\section*{Introduction}
+
+This is a report for the fourth assignment in the course ID1021 Algorithms and Data Structures. In this assignment, different sorting algorithms should be investigated.
+
+The implementation was done in C++ and was compiled with GCC using the {\tt -O0} parameter to ensure the compiler doesn't optimize away any part of the code.
+
+The source code can be found at: \href{https://github.com/HannesMann/ID1021/tree/main/src/calc}{GitHub}.
+
+\section*{Sorting algorithms}
+
+\subsection*{Selection sort}
+
+The first of the sorting algorithms that were tested is selection sort. This algorithm works by scanning the array at every position from $i \dots n$ and selecting the smallest element to be the next candidate in the sorted array.
+This isn't very efficient, but it's very simple to understand.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{n} & \textbf{selection sort} \\
+\hline
+	$2^{2}$ & 46.6 ns \\
+	$2^{3}$ & 91.4 ns \\
+	$2^{4}$ & 224 ns \\
+	$2^{5}$ & 695 ns \\
+	$2^{6}$ & 2480 ns \\
+	$2^{7}$ & 8630 ns \\
+	$2^{8}$ & 33600 ns \\
+	$2^{9}$ & 125000 ns \\
+	$2^{10}$ & 492000 ns \\
+\hline
+\end{tabular}
+\caption{Execution time for selection sort on a randomized array of size $n$.}
+\label{tab:table1}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}
+[
+	xlabel={n},
+	ylabel={t},
+	grid,
+	xmin=4,
+	xmax=1024,
+	ymin=46.6,
+	ymax=492000,
+	y label style={rotate=-90},
+	legend style={at={(0,1)},anchor=north west}
+]
+\addplot[red, no marks, densely dashed] table[col sep=comma]{plot1.csv};
+\addlegendentry{selection sort}
+\end{axis}
+\end{tikzpicture}
+\end{table}
+
+As can be seen from the graph, selection sort is an $O(n^2)$ algorithm. This makes sense, as iterating through the array is an $O(n)$ operation, and since every iteration involves another iteration that takes $n/2$ on average, this works out to $O(n) * O(n) = O(n^2)$.
+
+\subsection*{Insertion sort}
+
+The second algorithm is insertion sort, which sorts the array by moving elements towards the beginning until they end up in the right place. If $x_n < x_{n - 1}$, then the elements are swapped, and this operation is repeated until all items meet the inverse condition that $x_n >= x_{n - 1}$.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{n} & \textbf{insertion sort} \\
+\hline
+	$2^{2}$ & 23.7 ns \\
+	$2^{3}$ & 28.5 ns \\
+	$2^{4}$ & 38.9 ns \\
+	$2^{5}$ & 63.7 ns \\
+	$2^{6}$ & 133 ns \\
+	$2^{7}$ & 297 ns \\
+	$2^{8}$ & 744 ns \\
+	$2^{9}$ & 2223 ns \\
+	$2^{10}$ & 6856 ns \\
+\hline
+\end{tabular}
+\caption{Execution time for insertion sort on a randomized array of size $n$.}
+\label{tab:table2}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}
+[
+	xlabel={n},
+	ylabel={t},
+	grid,
+	xmin=4,
+	xmax=1024,
+	ymin=23.7,
+	ymax=6856,
+	y label style={rotate=-90},
+	legend style={at={(0,1)},anchor=north west}
+]
+\addplot[red, no marks, densely dashed] table[col sep=comma]{plot2.csv};
+\addlegendentry{insertion sort}
+\end{axis}
+\end{tikzpicture}
+\end{table}
+
+Insertion sort has a graph that ends up looking very similar to selection sort, but it is scaled down a lot. The algorithm is also $O(n^2)$ but the result is a lot smaller.
+
+Tests were performed on randomized data, but if the data was sorted then insertion sort would be much faster than selection sort, since insertion sort becomes $O(n)$ when no swaps are required, while selection sort will still need to scan through the whole array.
+
+\subsection*{Merge sort}
+
+The last algorithm is called merge sort, and it works by dividing the array into smaller and smaller chunks which are then merged together in a sorted order. The algorithm is recursive and operates on smaller and smaller chunks until $n=1$.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{n} & \textbf{merge sort} \\
+\hline
+	$2^{2}$ & 114 ns \\
+	$2^{3}$ & 213 ns \\
+	$2^{4}$ & 440 ns \\
+	$2^{5}$ & 935 ns \\
+	$2^{6}$ & 1980 ns \\
+	$2^{7}$ & 4170 ns \\
+	$2^{8}$ & 8850 ns \\
+	$2^{9}$ & 18300 ns \\
+	$2^{10}$ & 38700 ns \\
+\hline
+\end{tabular}
+\caption{Execution time for merge sort on a randomized array of size $n$.}
+\label{tab:table3}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}
+[
+	xlabel={n},
+	ylabel={t},
+	grid,
+	xmin=4,
+	xmax=1024,
+	ymin=114,
+	ymax=38700,
+	y label style={rotate=-90},
+	legend style={at={(0,1)},anchor=north west}
+]
+\addplot[red, no marks, densely dashed] table[col sep=comma]{plot3.csv};
+\addlegendentry{merge sort}
+\end{axis}
+\end{tikzpicture}
+\end{table}
+
+In this test merge sort ends up looking a lot like an $O(n)$ algorithm.
+Merging all the arrays together is done in $O(n)$ time, as there is only one loop that dominates the algorithm, but merge sort has to divide the arrays up first.
+
+Since the size is halved for every iteration, dividing the arrays is an $O(\log n)$ operation. This makes merge sort $O(n \log n)$, but since the array sizes used are so small the $O(n)$ term dominates.
+If a ridiculous array size was used like $2^1000$, the $\log n$ term would become much more visible.
+
+\section*{Conclusion}
+
+In the last assignment the cost of sorting data was not taken into consideration. This assignment has shown that operating on sorted data can make a lot of sense, at least for small array sizes.
+
+Insertion sort performed very well for all the array sizes tested, while selection sort has no advantages over the others. If array sizes were much larger merge sort would be the most efficient algorithm, since the two others grow quadratically with size.
+
+\end{document}
