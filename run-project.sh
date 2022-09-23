@@ -1,7 +1,10 @@
 #!/bin/bash
 # Run with ./run-project.sh [project]
 
-GCC_ARGS="-std=c++17 -O0 -g"
+set -e
+set -o pipefail
+
+GCC_ARGS="-std=c++17 -O0 -g -Wall"
 
 mkdir -p bin
 mkdir -p bin/objects
@@ -12,7 +15,7 @@ echo "  intro"
 function intro {
 	g++ src/intro/main.cpp -o bin/intro $GCC_ARGS $1 $2 $3 $4 $5
 
-	bin/intro
+	time nice -n -5 bin/intro
 }
 
 echo "  calc [-D DEBUG]"
@@ -23,7 +26,7 @@ function calc {
 
 	g++ bin/objects/main.o bin/objects/stack.o bin/objects/calc.o -o bin/calc
 
-	bin/calc
+	time nice -n -5 bin/calc
 }
 
 echo "  binary_search"
@@ -33,7 +36,7 @@ function binary_search {
 
 	g++ bin/objects/main.o bin/objects/search.o -o bin/binary_search
 
-	bin/binary_search
+	time nice -n -5 bin/binary_search
 }
 
 echo "  sort"
@@ -43,10 +46,20 @@ function sort {
 
 	g++ bin/objects/main.o bin/objects/algorithms.o -o bin/sort
 
-	bin/sort
+	time nice -n -5 bin/sort
+}
+
+echo "  linked_list"
+function linked_list {
+	g++ -c src/linked_list/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
+	g++ -c src/linked_list/stack.cpp -o bin/objects/stack.o $GCC_ARGS $1 $2 $3 $4 $5
+
+	g++ bin/objects/main.o bin/objects/stack.o -o bin/linked_list
+
+	time nice -n -5 bin/linked_list
 }
 
 echo ""
 echo "Trying to build and run $1"
 echo ""
-$1 $2 $3 $4 $5 $6 || { echo ""; echo "Failed"; exit 1; }
+$1 $2 $3 $4 $5 $6

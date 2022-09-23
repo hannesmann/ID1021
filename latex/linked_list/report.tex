@@ -1,0 +1,190 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+
+\usepackage{float}
+
+\usepackage{tikz}
+
+\usepackage{amsmath}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest, scaled y ticks=false}
+
+\begin{document}
+
+\title{
+    \textbf{Linked lists}
+}
+\author{Hannes Mann}
+\date{2022-09-23}
+
+\maketitle
+
+\section*{Introduction}
+
+This is a report for the fifth assignment in the course ID1021 Algorithms and Data Structures. In this assignment, linked data structures should be explored and compared to simple arrays.
+
+The implementation was done in C++ and was compiled with GCC using the {\tt -O0} parameter to ensure the compiler doesn't optimize away any part of the code.
+
+The source code can be found at: \href{https://github.com/HannesMann/ID1021/tree/main/src/linked_list}{GitHub}.
+
+\section*{Implementing a linked list}
+
+Linked lists have a very simple structure: They contain the value and optionally the next element in the list.
+
+In C++ this can be implemented with pointers, where a reference to a null pointer means there are no more elements in the list.
+This means that there's no need to store the length of the list as is needed with linear lists.
+There's also no guarantee that the list is contiguous in memory.
+
+\begin{minted}{cpp}
+template<typename T>
+class LinkedList {
+public:
+	LinkedList(T item) { ... }
+	LinkedList(T item, LinkedList<T>* tail) { ... }
+
+	T head;
+	LinkedList<T>* tail;
+
+	LinkedList<T>* last() { ... }
+	void append(LinkedList<T>* list) { ... }
+}
+\end{minted}
+
+\section*{Appending a list to another list}
+
+\subsection*{With linear lists}
+
+The first operation that should be explored on linked lists is appending a list to another list.
+
+Appending the list is a trivial operation, as the only thing that needs to be done is changing the tail of the last element in the first list to the start of the second list.
+The expensive portion of the operation is really finding out what the last element in the first list is, as the program will need to iterate through all elements until it finds one with no tail.
+
+We define two lists, $a$ and $b$, and what will be explored is appending $a$ to $b$. The size of $a$ and $b$ will have an impact on how long the operation takes.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{n} & \textbf{$n_a$ fixed $n_b$ varies} & \textbf{$n_a$ varies $n_b$ fixed} \\
+\hline
+	$2^{8}$ & 232 ns & 473 ns \\
+	$2^{9}$ & 458 ns & 472 ns \\
+	$2^{10}$ & 938 ns & 484 ns \\
+	$2^{11}$ & 2280 ns & 473 ns \\
+	$2^{12}$ & 5070 ns & 473 ns \\
+	$2^{13}$ & 10300 ns & 474 ns \\
+	$2^{14}$ & 23200 ns & 475 ns \\
+	$2^{15}$ & 51400 ns & 473 ns \\
+	$2^{16}$ & 94300 ns & 471 ns \\
+\hline
+\end{tabular}
+\caption{Execution time for appending list $a$ to list $b$.}
+\label{tab:table1}
+\end{table}
+
+It's very obvious without plotting the values on a graph that the size of $a$ does not matter, only the size of $b$.
+Changing the tail of $b$ is a trivial operation, so the execution time of iterating through $b$ dominates. This is an $O(n)$ operation where $n$ is the size of the list that is being appended to.
+
+\subsection*{With arrays}
+
+Appending one fixed size array to another fixed size array means a third array needs to be allocated and the two source arrays are then copied to this array in order. The benchmark includes both the allocation and copying part.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{n} & \textbf{$n_a$ fixed $n_b$ varies} & \textbf{$n_a$ varies $n_b$ fixed} \\
+\hline
+	$2^{8}$ & 962 ns & 1030 ns \\
+	$2^{9}$ & 1290 ns & 1350 ns \\
+	$2^{10}$ & 1930 ns & 1930 ns \\
+	$2^{11}$ & 3190 ns & 3140 ns \\
+	$2^{12}$ & 5720 ns & 5620 ns \\
+	$2^{13}$ & 10800 ns & 10680 ns \\
+	$2^{14}$ & 22200 ns & 22000 ns \\
+	$2^{15}$ & 44900 ns & 44600 ns \\
+	$2^{16}$ & 89500 ns & 89500 ns \\
+\hline
+\end{tabular}
+\caption{Execution time for appending list $a$ to list $b$.}
+\label{tab:table2}
+\end{table}
+
+As can be seen, when using simple contiguous arrays the performance is identical no matter which array is changing size.
+Arrays perform very similarly to linear lists when the list being appended to is changing size, and much worse when appending to a fixed size list.
+
+\section*{Allocating a list}
+
+The performance of a linear list was shown to be very good when appending one list to another, but the first benchmark isn't the whole story.
+Because appending a list to another list doesn't require allocation when using linear lists, this was not included in the benchmark, but in a real application this operation also needs to be factored in.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{n} & \textbf{array} & \textbf{linear list} & \textbf{linear list optimized} \\
+\hline
+	$2^{8}$ & 294 ns & 38.7 $\mu$s & 3126 ns  \\
+	$2^{9}$ & 564 ns & 131 $\mu$s & 6218 ns  \\
+	$2^{10}$ & 1100 ns & 515 $\mu$s & 12600 ns  \\
+	$2^{11}$ & 4280 ns & 2120 $\mu$s & 25200 ns  \\
+	$2^{12}$ & 4370 ns & 8245 $\mu$s & 50400 ns  \\
+	$2^{13}$ & 8680 ns & 31.7 ms & 102000 ns  \\
+	$2^{14}$ & 17300 ns & 126 ms & 207000 ns  \\
+	$2^{15}$ & 34200 ns & 502 ms & 407000 ns  \\
+	$2^{16}$ & 68300 ns & 1.99 s & 814000 ns  \\
+\hline
+\end{tabular}
+\caption{Execution time for allocating list of size $n$.}
+\label{tab:table2}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}
+[
+	xlabel={n},
+	ylabel={t},
+	grid,
+	xmin=256,
+	xmax=65536,
+	ymin=294,
+	ymax=2442000,
+	y label style={rotate=-90}
+]
+\addplot[red, no marks, densely dashed] table[col sep=comma]{plot1.csv};
+\addlegendentry{array}
+\addplot[blue, no marks, densely dashed] table[col sep=comma]{plot2.csv};
+\addlegendentry{linear list}
+\addplot[green, no marks, densely dashed] table[col sep=comma]{plot3.csv};
+\addlegendentry{linear list optimized}
+\end{axis}
+\end{tikzpicture}
+\end{table}
+
+Allocating a fixed size array is a very fast operation so the cost is much lower than building a linked list.
+In fact, a custom "naive" implementation of \mintinline{cpp}{memset} had to be created because the function included in the GCC standard library was too fast and it wouldn't be a fair comparison (as the linked list has been implemented manually).
+
+Building a linear list by repeatedly calling the \mintinline{cpp}{append} function is too slow to be useful. A list with only $2^{16}$ elements takes two seconds to build. The "optimized" version keeps track of the last element in the list and repeatedly appends to it.
+
+\section*{Implementing a stack with linear lists}
+
+In the second assignment of this course a stack was used to implement an RPN calculator.
+This stack used an array that was repeatedly reallocated as items were pushed and popped off the stack.
+
+A stack can also be implemented using a linked list. The element on top of the stack is the last element in the linked list.
+Pushing elements is done by changing the tail of the last element and popping elements is done by clearing the tail of the second-to-last element.
+
+The performance characteristics of a linked list stack are very easy to understand.
+Since modifying the tail is trivial, the expensive operation is finding the last element which means all operations on the stack are $O(n)$.
+
+The performance characteristics of the dynamic array stack aren't as easy to predict as the array only resizes at specific points but it will be better on average and worse when the array needs to resize.
+
+\end{document}
