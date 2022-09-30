@@ -1,0 +1,34 @@
+hannes@desktop ~/Dev/ID1021 (main *) $ ./run-project.sh doubly_linked_list
+Available:
+  intro
+  calc [-D DEBUG]
+  binary_search
+  sort
+  linked_list
+  doubly_linked_list
+
+Trying to build and run doubly_linked_list
+
+Benchmarking remove() with linked list...
+  n=5: 5.475000 ns (± 0.375000 ns)
+  n=50: 34.375000 ns (± 0.075000 ns)
+  n=100: 66.627500 ns (± 0.227500 ns)
+  n=1000: 1182.685000 ns (± 61.375000 ns)
+  n=10000: 16009.685000 ns (± 4234.965000 ns)
+  n=50000: 59694.797500 ns (± 1463.362500 ns)
+  n=100000: 119594.890000 ns (± 590.355000 ns)
+  n=250000: 287139.055000 ns (± 258.405000 ns)
+
+Benchmarking remove() with doubly-linked list...
+  n=5: 7.075000 ns (± 0.125000 ns)
+  n=50: 7.600000 ns (± 0.050000 ns)
+  n=100: 7.227500 ns (± 0.327500 ns)
+  n=1000: 7.175000 ns (± 0.175000 ns)
+  n=10000: 8.150000 ns (± 0.150000 ns)
+  n=50000: 8.950000 ns (± 0.100000 ns)
+  n=100000: 8.802500 ns (± 0.102500 ns)
+  n=250000: 13.925000 ns (± 5.075000 ns)
+
+real    0m0.761s
+user    0m0.758s
+sys     0m0.003s

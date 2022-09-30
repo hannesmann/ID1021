@@ -1,0 +1,149 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+
+\usepackage{float}
+
+\usepackage{tikz}
+
+\usepackage{amsmath}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest, scaled y ticks=false}
+
+\begin{document}
+
+\title{
+    \textbf{Doubly linked lists}
+}
+\author{Hannes Mann}
+\date{2022-09-30}
+
+\maketitle
+
+\section*{Introduction}
+
+This is a report for the first higher grade assignment in the course ID1021 Algorithms and Data Structures.
+In this assignment, the benefits and drawbacks of doubly linked lists compared to singly linked lists should be explored.
+
+The implementation was done in C++ and was compiled with GCC using the {\tt -O0} parameter to ensure the compiler doesn't optimize away any part of the code.
+
+The source code can be found at: \href{https://github.com/HannesMann/ID1021/tree/main/src/doubly_linked_list}{GitHub}.
+
+\section*{Implementing a doubly linked list}
+
+A doubly linked list is very similar to a ''regular'' singly linked list but with an important difference: Each element has a pointer to both the previous and next element.
+This means that the list can be traversed in both directions.
+An element with no ''previous'' pointer is the first element in the list, and an element with no ''next'' pointer is the last element in the list.
+
+\begin{minted}{cpp}
+template<typename T>
+struct DoublyLinkedList {
+	DoublyLinkedList(T item) { ... }
+
+	T item;
+	DoublyLinkedList<T> *previous, *next;
+
+	DoublyLinkedList<T>* first() {
+		/* While previous element exists, continue... */
+	}
+	DoublyLinkedList<T>* last() {
+		/* While next element exists, continue... */
+	}
+
+	/* Append element to end of list */
+	void append_to_end(DoublyLinkedList<T>* list) {
+		/* Update last()->next and item->previous... */
+	}
+
+	/* Remove this item from the list */
+	void remove_self() {
+		/* Update previous->next and next->previous... */
+	}
+}
+\end{minted}
+
+\section*{Comparison to singly linked lists}
+
+When comparing doubly linked lists to singly linked lists, the first thing that is immediately obvious is that doubly linked lists will use more memory.
+Singly linked lists store one item of type $T$ and a next pointer, while a doubly linked list needs to store an additional pointer for every element.
+This pointer requires an extra 4 or 8 bytes on modern architectures.
+
+The additional information that an element in a doubly linked list carries does however allow some operations to be more efficient.
+Removing an element in a singly linked list means that the first element in the list needs to be known, and from this first element the list is searched for the element to remove.
+
+With a doubly linked list an item has the ability to remove itself from the list without needing to search through it.
+The neighbors are updated so that the ''previous'' element points to the ''next'' element, and vice versa.
+This brings a remove operation down from $O(n)$ to $O(1)$ which can be a massive benefit in large lists.
+
+Adding an element to a doubly linked list requires an additional pointer update but this is trivial on modern hardware. The operation remains $O(1)$ but the execution time doubles.
+
+\section*{Benchmarks}
+
+Benchmarking is done by measuring the time it takes to remove and add back a random element from a list with $n$ elements.
+The random element is picked in constant time and the sequence is the same for every run of the benchmark.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{n} & \textbf{singly linked} & \textbf{doubly linked} \\
+\hline
+	5 & 5.5 ns & 7.1 ns \\
+	50 & 34 ns & 7.6 ns \\
+	100 & 67 ns & 7.2 ns \\
+	1000 & 1200 ns & 7.2 ns \\
+	10000 & 16000 ns & 8.2 ns \\
+	50000 & 60000 ns & 9.0 ns \\
+	100000 & 120000 ns & 8.8 ns \\
+	250000 & 280000 ns & 14 ns \\
+\hline
+\end{tabular}
+\caption{Execution time for removing and adding elements to list of size $n$.}
+\label{tab:table1}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}
+[
+	xlabel={n},
+	ylabel={t},
+	grid,
+	xmin=5,
+	xmax=250000,
+	ymin=5.5,
+	ymax=280000,
+	y label style={rotate=-90}
+]
+\addplot[red, no marks, densely dashed] table[col sep=comma]{plot1.csv};
+\addlegendentry{singly linked}
+\addplot[blue, no marks, densely dashed] table[col sep=comma]{plot2.csv};
+\addlegendentry{doubly linked}
+\end{axis}
+\end{tikzpicture}
+\end{table}
+
+As can be seen from the results removing elements from a doubly linked list is much faster than the same operation on a singly linked list.
+The operation executes in linear time for the singly linked list and constant time for the doubly linked list.
+
+\section*{Observations from the benchmark}
+
+The first thing to note is that for very small values of $n$ the singly linked list is actually faster. This is because there are less pointers to update.
+
+It's also interesting to note that the doubly linked list sees a small time increase when $n=250000$, even though the same amount of operations are executed.
+
+This likely has to do with the benchmark itself and not the linked list implementation.
+Because the benchmark uses an array to select a random element in constant time, what's happening is likely that the array no longer fits in L1/L2/etc.\ cache like it did when $n$ was smaller and because of this accessing the ''random index'' array is what is responsible for the time increase.
+
+\section*{Conclusion}
+
+Doubly linked lists have obvious advantages when list manipulation or searching is required and the extra memory required doesn't matter much unless the system is heavily memory constrained.
+For most use cases, doubly linked lists seem like the better choice.
+
+\end{document}

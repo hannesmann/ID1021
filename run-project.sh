@@ -59,6 +59,16 @@ function linked_list {
 	time nice -n -5 bin/linked_list
 }
 
+echo "  doubly_linked_list"
+function doubly_linked_list {
+	g++ -c src/doubly_linked_list/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
+
+	g++ bin/objects/main.o -o bin/doubly_linked_list
+
+	time nice -n -5 bin/doubly_linked_list
+}
+
+
 echo ""
 echo "Trying to build and run $1"
 echo ""
