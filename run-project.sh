@@ -68,6 +68,16 @@ function doubly_linked_list {
 	time nice -n -5 bin/doubly_linked_list
 }
 
+echo "  trees"
+function trees {
+	g++ -c src/trees/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
+	g++ -c src/trees/tree.cpp -o bin/objects/tree.o $GCC_ARGS $1 $2 $3 $4 $5
+	g++ -c src/trees/iterator.cpp -o bin/objects/iterator.o $GCC_ARGS $1 $2 $3 $4 $5
+
+	g++ bin/objects/main.o bin/objects/tree.o bin/objects/iterator.o -o bin/trees
+
+	time nice -n -5 bin/trees
+}
 
 echo ""
 echo "Trying to build and run $1"

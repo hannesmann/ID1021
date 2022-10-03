@@ -1,0 +1,32 @@
+Available:
+  intro
+  calc [-D DEBUG]
+  binary_search
+  sort
+  linked_list
+  doubly_linked_list
+  trees
+
+Trying to build and run trees
+
+Benchmarking lookup() with binary tree...
+  n=5: 13.50 ns (± 2.83 ns)
+  n=50: 14.53 ns (± 3.87 ns)
+  n=100: 15.72 ns (± 2.18 ns)
+  n=500: 16.70 ns (± 2.07 ns)
+  n=1000: 16.05 ns (± 5.15 ns)
+  n=5000: 20.97 ns (± 6.47 ns)
+  n=10000: 23.08 ns (± 3.32 ns)
+  n=50000: 28.89 ns (± 3.75 ns)
+  n=100000: 31.72 ns (± 2.02 ns)
+  n=250000: 34.20 ns (± 2.67 ns)
+
+Testing IntBinaryTree::print()...
+1:36 7:16 10:8 14:49 17:2 29:28 30:49 31:13 (root) 35:49 36:39 38:12 39:18 41:39
+
+Testing IntBinaryTreeIterator...
+101 102 103 105 106 107 108
+
+real    0m0.799s
+user    0m0.798s
+sys     0m0.001s

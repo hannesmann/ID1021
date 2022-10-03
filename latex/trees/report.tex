@@ -1,0 +1,190 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+
+\usepackage{float}
+
+\usepackage{tikz}
+
+\usepackage{amsmath}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest, scaled y ticks=false}
+
+\begin{document}
+
+\title{
+    \textbf{Binary trees}
+}
+\author{Hannes Mann}
+\date{2022-10-03}
+
+\maketitle
+
+\section*{Introduction}
+
+This is a report for the sixth assignment in the course ID1021 Algorithms and Data Structures.
+In this assignment, a simple sorted binary tree holding integers should be implemented and explored.
+
+The implementation was done in C++ and was compiled with GCC using the {\tt -O0} parameter to ensure the compiler doesn't optimize away any part of the code.
+
+The source code can be found at: \href{https://github.com/HannesMann/ID1021/tree/main/src/trees}{GitHub}.
+
+\section*{Implementing a binary tree}
+
+A binary tree is a linked data structure containing nodes with up to two children. Since there can only be two children, these are referred to as ''left'' and ''right''.
+In our case there are some additional restrictions:
+\begin{itemize}
+	\item Every node in the tree maps a key to a value.
+	\item The tree contains no duplicate keys.
+	\item The tree is always sorted: Every ''left'' key is smaller than the root key and every ''right'' key is larger than the root key.
+\end{itemize}
+
+In C++ this can be implemented by a data structure holding the root node (which operations are performed on) and a node structure containing keys, values and children. A missing node is represented by a null pointer.
+
+\begin{minted}{cpp}
+struct IntBinaryTreeNode {
+	int key;
+	int value;
+
+	IntBinaryTreeNode* left = nullptr;
+	IntBinaryTreeNode* right = nullptr;
+
+	...
+};
+\end{minted}
+
+\begin{minted}{cpp}
+struct IntBinaryTree {
+	IntBinaryTreeNode* root = nullptr;
+
+	...
+};
+\end{minted}
+
+To add an item, the program recursively walks down the tree. There are three different conditions that ensure the tree is always sorted and contains no duplicates:
+\begin{itemize}
+	\item \textbf{The key is the same as the key being added}: The value is updated to the specified value.
+	\item \textbf{The key is smaller than the key being added}: Walk down to the left child. If there is none, create it with the specified values.
+	\item \textbf{The key is larger than than the key being added}: Walk down to the right child. If there is none, create it with the specified values.
+\end{itemize}
+
+To look up an item, the program uses the same algorithm. It walks left or right depending on the value of the key relative to the node being explored.
+This is very similar to the binary search algorithm that was implemented in the third assignment. Since we know the list/tree is sorted, there's no need to search both the side that is smaller and the side that is bigger than the key.
+
+\section*{Benchmarking the lookup operation}
+
+Benchmarking is done by measuring the time it takes to search for a random key in a tree with $n$ nodes.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{n} & \textbf{lookup} \\
+\hline
+	5 & 14 ns \\
+	50 & 15 ns \\
+	100 & 16 ns \\
+	500 & 17 ns \\
+	1000 & 16 ns \\
+	5000 & 21 ns \\
+	10000 & 23 ns \\
+	50000 & 29 ns \\
+	100000 & 32 ns \\
+	250000 & 34 ns \\
+\hline
+\end{tabular}
+\caption{Execution time for looking up a random key in a tree with $n$ nodes.}
+\label{tab:table1}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}
+[
+	xlabel={n},
+	ylabel={t},
+	grid,
+	xmin=5,
+	xmax=250000,
+	ymin=14,
+	ymax=34,
+	y label style={rotate=-90},
+	legend style={at={(0.05,0.95)},anchor=north west}
+]
+\addplot[red, no marks, densely dashed] table[col sep=comma]{plot1.csv};
+\addlegendentry{lookup}
+\end{axis}
+\end{tikzpicture}
+\end{table}
+
+As can be seen from the graph, the execution time of the lookup operation follows a logarithmic function. This means it remains fairly constant despite the increasing value of $n$. This operation is $O(\log n)$.
+
+The add operation will behave the same way as it uses the same algorithm. When adding an ordered set of unique keys, the operation will execute in $O(n)$ time, as the hit rate for duplicates will be 0\%. The whole tree has to be traversed every time.
+
+\section*{Traversing the tree with an iterator}
+
+It can be useful to be able to traverse through a binary tree in a sorted order, where the smallest keys come first and the largest keys come last.
+Since our trees are kept ordered in memory this can be accomplished by starting at the very leftmost node and recursively working up the tree towards the right. A simple example looks like this:
+\begin{minted}{cpp}
+void iterate_tree() {
+	if(left) {
+		left->iterate_tree();
+	}
+	/* do something with the current node */
+	if(right) {
+		right->iterate_tree();
+	}
+}
+\end{minted}
+
+This relies on the implict stack in C++ that keeps track of how many times we've called the function (the recursion depth), but if we want to save the results for later an explicit stack data structure can be used.
+
+An iterator is an interface in many programming languages that can walk through a structure item-by-item. The user can choose to wait or stop iterating at any point.
+We can use an iterator with an explicit stack to walk through a tree item-by-item. Iterators exist in the C++ standard library but the interface is complicated and it's easier to repliace the Java iterator with a custom class:
+\begin{minted}{cpp}
+class IntBinaryTreeIterator {
+public:
+	IntBinaryTreeIterator(const IntBinaryTree& tree);
+
+	bool has_next() const;
+	int next();
+private:
+	void fill_stack(const IntBinaryTreeNode* source);
+
+	const IntBinaryTreeNode* m_next;
+	LinkedListStack<const IntBinaryTreeNode*> m_stack;
+};
+\end{minted}
+
+\mintinline{cpp}{has_next()} tells us if there are any items left in the iterator and \mintinline{cpp}{next()} pops the next item from the stack and returns it.
+The function \mintinline{cpp}{fill_stack()} is used to recursively populate the stack in the constructor.
+This uses the same algorithm as mentioned earlier but in reverse (start at rightmost node and work upwards), as the stack is a LIFO (last in first out) structure, so the ''first'' item is really the last that will be returned from the iterator.
+
+\begin{minted}{cpp}
+tree.add(5, 105);
+tree.add(2, 102);
+tree.add(7, 107);
+tree.add(1, 101);
+tree.add(8, 108);
+tree.add(6, 106);
+tree.add(3, 103);
+
+IntBinaryTreeIterator iterator(tree);
+while(iterator.has_next()) {
+	printf("%d ", iterator.next());
+}
+printf("\n");
+
+/* This outputs 101 102 103 105 106 107 108 */
+\end{minted}
+
+As the iterator populates the stack in the constructor, nothing will happen to the iterator when the tree adds new nodes. The iterator will miss these nodes but continue to work.
+Removing nodes from the tree will cause an error, as these nodes are deleted from memory but still kept in the stack.
+
+\end{document}
