@@ -10,7 +10,7 @@ public:
 	bool has_next() const;
 	int next();
 private:
-	void fill_stack(const IntBinaryTreeNode* source);
+	void walk_to_leftmost();
 
 	const IntBinaryTreeNode* m_next;
 	LinkedListStack<const IntBinaryTreeNode*> m_stack;
