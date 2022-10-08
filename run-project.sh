@@ -79,6 +79,17 @@ function trees {
 	time nice -n -5 bin/trees
 }
 
+echo "  queue"
+function queue {
+	g++ -c src/queue/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
+	g++ -c src/queue/tree.cpp -o bin/objects/tree.o $GCC_ARGS $1 $2 $3 $4 $5
+	g++ -c src/queue/iterator.cpp -o bin/objects/iterator.o $GCC_ARGS $1 $2 $3 $4 $5
+
+	g++ bin/objects/main.o bin/objects/tree.o bin/objects/iterator.o -o bin/queue
+
+	time nice -n -5 bin/queue
+}
+
 echo ""
 echo "Trying to build and run $1"
 echo ""
