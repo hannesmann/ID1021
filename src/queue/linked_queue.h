@@ -11,29 +11,27 @@ public:
 	}
 
 	void push(T value) override {
-		LinkedList<T>* last = m_list->last();
-
-		if(last) {
-			last->next = new LinkedList<T>(value);
+		if(m_list) {
+			m_list->last()->next = new LinkedList<T>(value);
 		}
 		else {
 			m_list = new LinkedList<T>(value);
 		}
 	}
 
-	std::optional<T> pop() override {
-		std::optional<T> value = std::nullopt;
-
+	optional<T> pop() override {
 		if(m_list) {
 			LinkedList<T>* first = m_list;
-			value = first->item;
-			m_list = first->next;
+			T value = first->item;
 
+			m_list = first->next;
 			first->next = nullptr;
 			delete first;
+
+			return value;
 		}
 
-		return value;
+		return nullopt;
 	}
 private:
 	LinkedList<T>* m_list = nullptr;
@@ -56,8 +54,8 @@ public:
 		}
 	}
 
-	std::optional<T> pop() override {
-		std::optional<T> value = std::nullopt;
+	optional<T> pop() override {
+		optional<T> value = nullopt;
 
 		if(m_first) {
 			LinkedList<T>* first = m_first;

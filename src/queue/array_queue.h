@@ -28,8 +28,7 @@ public:
 		m_items_in_queue = true;
 	}
 
-	std::optional<T> pop() override {
-		/* If there is no distance between the first and last slot, there are no items in the queue */
+	optional<T> pop() override {
 		if(m_items_in_queue) {
 			T value = m_array[m_next_read_slot++];
 			m_next_read_slot = m_next_read_slot % m_slots;
@@ -42,7 +41,7 @@ public:
 			return value;
 		}
 
-		return std::nullopt;
+		return nullopt;
 	}
 
 private:
@@ -59,7 +58,7 @@ private:
 			new_array[i++] = old_array[j];
 		}
 		/* Copy remaining items that have wrapped around */
-		for(int j = 0; j < m_next_read_slot; j++) {
+		for(int j = 0; j < m_next_write_slot; j++) {
 			new_array[i++] = old_array[j];
 		}
 

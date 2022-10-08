@@ -1,0 +1,69 @@
+hannes@desktop ~/Dev/ID1021 (main) $ ./run-project.sh queue
+Available:
+  intro
+  calc [-D DEBUG]
+  binary_search
+  sort
+  linked_list
+  doubly_linked_list
+  trees
+  queue
+
+Trying to build and run queue
+
+Testing IntBinaryTreeIterator...
+105 102 107 101 103 106 108
+
+Testing some queues...
+STLQueue                 n=01: 7 -1 -1 -1 -1
+LLQueueSimple            n=01: 7 -1 -1 -1 -1
+LLQueue                  n=01: 7 -1 -1 -1 -1
+ArrayQueue (static  s=n) n=01: 7 -1 -1 -1 -1
+ArrayQueue (dynamic s=2) n=01: 7 -1 -1 -1 -1
+VirtualArrayQueue        n=01: 7 -1 -1 -1 -1
+
+STLQueue                 n=02: 116 -1 -1 -1 -1
+LLQueueSimple            n=02: 116 -1 -1 -1 -1
+LLQueue                  n=02: 116 -1 -1 -1 -1
+ArrayQueue (static  s=n) n=02: 116 -1 -1 -1 -1
+ArrayQueue (dynamic s=2) n=02: 116 -1 -1 -1 -1
+VirtualArrayQueue        n=02: 116 -1 -1 -1 -1
+
+STLQueue                 n=04: 6 96 136 -1 -1 -1 -1
+LLQueueSimple            n=04: 6 96 136 -1 -1 -1 -1
+LLQueue                  n=04: 6 96 136 -1 -1 -1 -1
+ArrayQueue (static  s=n) n=04: 6 96 136 -1 -1 -1 -1
+ArrayQueue (dynamic s=2) n=04: 6 96 136 -1 -1 -1 -1
+VirtualArrayQueue        n=04: 6 96 136 -1 -1 -1 -1
+
+STLQueue                 n=08: 57 7 115 234 132 -1 -1 -1 -1
+LLQueueSimple            n=08: 57 7 115 234 132 -1 -1 -1 -1
+LLQueue                  n=08: 57 7 115 234 132 -1 -1 -1 -1
+ArrayQueue (static  s=n) n=08: 57 7 115 234 132 -1 -1 -1 -1
+ArrayQueue (dynamic s=2) n=08: 57 7 115 234 132 -1 -1 -1 -1
+VirtualArrayQueue        n=08: 57 7 115 234 132 -1 -1 -1 -1
+
+STLQueue                 n=16: 75 194 83 135 143 218 245 209 235 152 -1 -1 -1 -1
+LLQueueSimple            n=16: 75 194 83 135 143 218 245 209 235 152 -1 -1 -1 -1
+LLQueue                  n=16: 75 194 83 135 143 218 245 209 235 152 -1 -1 -1 -1
+ArrayQueue (static  s=n) n=16: 75 194 83 135 143 218 245 209 235 152 -1 -1 -1 -1
+ArrayQueue (dynamic s=2) n=16: 75 194 83 135 143 218 245 209 235 152 -1 -1 -1 -1
+VirtualArrayQueue        n=16: 75 194 83 135 143 218 245 209 235 152 -1 -1 -1 -1
+
+STLQueue                 n=32: 170 195 110 33 176 46 179 220 4 121 152 200 12 88 217 3 50 -1 -1 -1 -1
+LLQueueSimple            n=32: 170 195 110 33 176 46 179 220 4 121 152 200 12 88 217 3 50 -1 -1 -1 -1
+LLQueue                  n=32: 170 195 110 33 176 46 179 220 4 121 152 200 12 88 217 3 50 -1 -1 -1 -1
+ArrayQueue (static  s=n) n=32: 170 195 110 33 176 46 179 220 4 121 152 200 12 88 217 3 50 -1 -1 -1 -1
+ArrayQueue (dynamic s=2) n=32: 170 195 110 33 176 46 179 220 4 121 152 200 12 88 217 3 50 -1 -1 -1 -1
+VirtualArrayQueue        n=32: 170 195 110 33 176 46 179 220 4 121 152 200 12 88 217 3 50 -1 -1 -1 -1
+
+STLQueue                 n=64: 51 21 247 8 33 136 115 201 97 188 193 8 176 72 254 125 98 157 169 101 187 71 233 226 39 163 165 65 153 165 159 -1 -1 -1 -1
+LLQueueSimple            n=64: 51 21 247 8 33 136 115 201 97 188 193 8 176 72 254 125 98 157 169 101 187 71 233 226 39 163 165 65 153 165 159 -1 -1 -1 -1
+LLQueue                  n=64: 51 21 247 8 33 136 115 201 97 188 193 8 176 72 254 125 98 157 169 101 187 71 233 226 39 163 165 65 153 165 159 -1 -1 -1 -1
+ArrayQueue (static  s=n) n=64: 51 21 247 8 33 136 115 201 97 188 193 8 176 72 254 125 98 157 169 101 187 71 233 226 39 163 165 65 153 165 159 -1 -1 -1 -1
+ArrayQueue (dynamic s=2) n=64: 51 21 247 8 33 136 115 201 97 188 193 8 176 72 254 125 98 157 169 101 187 71 233 226 39 163 165 65 153 165 159 -1 -1 -1 -1
+VirtualArrayQueue        n=64: 51 21 247 8 33 136 115 201 97 188 193 8 176 72 254 125 98 157 169 101 187 71 233 226 39 163 165 65 153 165 159 -1 -1 -1 -1
+
+real    0m0.001s
+user    0m0.000s
+sys     0m0.001s

@@ -1,0 +1,192 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+
+\usepackage{float}
+
+\usepackage{tikz}
+
+\usepackage{amsmath}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest, scaled y ticks=false}
+
+\begin{document}
+
+\title{
+    \textbf{Queues}
+}
+\author{Hannes Mann}
+\date{2022-10-08}
+
+\maketitle
+
+\section*{Introduction}
+
+This is a report for the seventh assignment in the course ID1021 Algorithms and Data Structures.
+In this assignment, a FIFO queue should be implemented with several different methods and used to traverse a binary tree.
+
+The implementation was done in C++ and was compiled with GCC using the {\tt -O0} parameter to ensure the compiler doesn't optimize away any part of the code.
+
+The source code can be found at: \href{https://github.com/HannesMann/ID1021/tree/main/src/queue}{GitHub}.
+
+\section*{Implementing a queue}
+
+A queue is a structure storing items in a \emph{first-in-first-out} (FIFO) order.
+This means that when items are pushed on the queue, they are stored in the last available position, and when they are removed they are taken from the first available position.
+
+First, an interface for a queue was created in C++ that the implementations in this assignment will derive from. It contains two empty methods:
+\begin{itemize}
+	\item \mintinline{cpp}{void push(T value)}: Adds an item of type $T$ to the end of the queue.
+	\item \mintinline{cpp}{optional<T> pop()}: Removes an item of type $T$ from the front of the queue. If the queue contains no items, \mintinline{cpp}{nullopt} is returned.
+\end{itemize}
+
+\subsection*{With linked lists}
+
+The most straightforward way to implement a queue is with a linked list.
+Adding an item is done by appending it to the end of the list, and removing an item is done by moving the pointer to the list forward one element.
+
+\begin{minted}[tabsize=4,fontsize=\footnotesize]{cpp}
+void push(T value) {
+	if(m_list) {
+		m_list->last()->next = new LinkedList<T>(value);
+	}
+	else {
+		m_list = new LinkedList<T>(value);
+	}
+}
+
+optional<T> pop() {
+	/* Deallocation of m_list ignored in example */
+	if(m_list) {
+		T value = m_list->item;
+		m_list = m_list->next;
+		return value;
+	}
+
+	return nullopt;
+}
+\end{minted}
+
+This implementation is simple but it has a drawback in that adding a new item can take a long time with large lists. The call to \mintinline{cpp}{m_list->last()} executes in $O(n)$ time.
+Storing a pointer to the last element in the list (\mintinline{cpp}{m_first} and \mintinline{cpp}{m_last}) allows \mintinline{cpp}{push()} to operate in $O(1)$ time.
+
+\begin{minted}[tabsize=4,fontsize=\footnotesize]{cpp}
+void push(T value) {
+	if(m_last) {
+		m_last = m_last->next = new LinkedList<T>(value);
+	}
+	else {
+		m_first = m_last = new LinkedList<T>(value);
+	}
+}
+\end{minted}
+
+\subsection*{With an array}
+
+There are many different ways to implement a queue with a fixed-size array as a backing store.
+The most straightforward solution is to always treat position $0$ as the first element in the queue and position $n-1$ as the last element.
+This soluton however has a drawback when items are removed, as all other items will need to be moved back one position.
+
+A better solution is to treat the array as a circular buffer. The queue internally stores a range from $a$ to $b$ where elements are currently present.
+When an element is added $b$ is incremented, and when an element is removed $a$ is incremented. If $b$ catches up to $a$ the queue has overflowed.
+$a$ may also be the same as $b$ if there are no items present in the queue.
+
+\subsubsection*{Treating $a$ and $b$ as indexes in the array}
+
+The solution proposed in the instructions to the assignment is to treat $a$ and $b$ as real positions in the array that tells the program where to write and read from next.
+If $a$ or $b$ exceeds the number of slots available in the queue they wrap around back to $0$. This also means that the condition $b < a$ is possible.
+
+\begin{minted}[tabsize=4,fontsize=\footnotesize]{cpp}
+void push(T value) {
+	/* Overflow checking omitted */
+	m_array[m_next_write_slot++] = value;
+	m_next_write_slot = m_next_write_slot % m_slots;
+
+	m_items_in_queue = true;
+}
+
+optional<T> pop() {
+	if(m_items_in_queue) {
+		T value = m_array[m_next_read_slot++];
+		m_next_read_slot = m_next_read_slot % m_slots;
+
+		/* If the next read slot has not been written yet, we have emptied the queue */
+		if(m_next_read_slot == m_next_write_slot) {
+			m_items_in_queue = false;
+		}
+
+		return value;
+	}
+
+	return nullopt;
+}
+\end{minted}
+
+The downside with this solution is that an additional variable is required to keep track if items have been added to the queue or not.
+The state of the queue can't be inferred only from the values of $a$ and $b$, because information is lost when the index wraps around.
+
+\textbf{For example:} Let's say we have a queue with only a single slot. When no items have been added both $a$ and $b$ are $0$. After adding an item $b$ will be incremented to $1$.
+Since the read and write positions are different, there are clearly items present in the queue, but the problem is that $b$ will wrap back to $0$ after writing since no next position exists.\
+$a$ and $b$ are \emph{always} $0$ in a queue with size $1$, so an additional variable is required to make the solution work.
+
+\subsubsection*{Treating $a$ and $b$ as offsets in an endless address space}
+
+A more elegant solution (in my opinion) is to have $a$ and $b$ always increase as items are added and removed to the queue. We can then map $a$ and $b$ to real positions in the array only when it's time to actually modify an item.
+
+\begin{minted}[tabsize=4,fontsize=\footnotesize]{cpp}
+void push(T value) {
+	/* Overflow checking omitted */
+	m_array[m_next_virtual_write_slot++ % m_slots] = value;
+}
+
+optional<T> pop() {
+	if(m_next_virtual_read_slot != m_next_virtual_write_slot) {
+		return m_array[m_next_virtual_read_slot++ % m_slots];
+	}
+
+	return nullopt;
+}
+\end{minted}
+
+This uses the same method as the first solution to handle overflows (the items will end up in the same positions), but $a$ and $b$ will convey more information to allow the queue to infer its state without an additional variable.
+If $a$ has caught up to $b$, there are no items present in the queue, otherwise there are.
+
+\subsubsection*{Dynamic resizing}
+
+The linked list queue can store a theoretically infinite amount of items, but if we want the same behavior with a fixed-size array the array is going to need to be resized when the queue overflows.
+
+The basic idea is to create a new array of size $n*2$ when $a$ has caught up to $b$.
+Basing this off the first solution we check for the condition \mintinline[breaklines]{cpp}{m_next_read_slot == m_next_write_slot && m_items_in_queue} and if this is true we double the size of the array.
+
+Resizing is done by first allocating a new array and then (1) copying all items from $a..n-1$ to the start of the array and (2) copying all items from $0..b$ to the last positions in the array.
+$a$ is reset to $0$ and $b$ is set to $n$.
+
+\section*{Traversing a binary tree with a queue}
+
+In the last assignment a stack was used to traverse a binary tree in sorted order. The iterator walks down the leftmost path and then walks back upwards by popping nodes off the stack. This is called \emph{depth first} order.
+
+If we want to traverse all nodes of one level before going deeper into the tree we can use queues. The basic idea is to start with the root node and then, walking downwards, the left and right nodes are added to the queue.
+Doing this recursively gives us all nodes of a level sorted from left to right. This is called \emph{breadth first} order.
+
+\begin{minted}[tabsize=4,fontsize=\footnotesize]{cpp}
+int next() {
+	if(m_next) {
+		int value = m_next->value;
+
+		if(m_next->left) m_queue.push(m_next->left);
+		if(m_next->right) m_queue.push(m_next->right);
+
+		m_next = m_queue.pop().value_or(nullptr);
+		return value;
+	}
+
+	return -1;
+}
+\end{minted}
+
+\end{document}

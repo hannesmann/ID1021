@@ -25,13 +25,12 @@ public:
 		m_array[map(m_next_virtual_write_slot++)] = value;
 	}
 
-	std::optional<T> pop() override {
-		/* If there is no distance between the first and last slot, there are no items in the queue */
+	optional<T> pop() override {
 		if(used_slots()) {
 			return m_array[map(m_next_virtual_read_slot++)];
 		}
 
-		return std::nullopt;
+		return nullopt;
 	}
 
 private:
