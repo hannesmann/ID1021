@@ -84,7 +84,7 @@ void benchmark_quicksort_linked_list(int* random_numbers, int n, int*, LinkedLis
 
 /* Receives a function F(random_numbers, n, array_storage, &node_storage) */
 void benchmark_quicksort(std::function<void(int*, int n, int*, LinkedList<int>**)> f, bool sorted_data) {
-	static int elemcount[] = { 100, 250, 500, 1000, 2500, 5000, 10000 };
+	static int elemcount[] = { 100, 250, 500, 1000, 2500, 5000, 10000, 12500, 15000 };
 
 	for(unsigned long i = 0; i < sizeof(elemcount) / sizeof(int); i++) {
 		int n = elemcount[i];
