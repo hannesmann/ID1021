@@ -6,6 +6,7 @@ set -o pipefail
 
 GCC_ARGS="-std=c++17 -O0 -g -Wall"
 
+rm -R bin
 mkdir -p bin
 mkdir -p bin/objects
 
@@ -88,6 +89,26 @@ function queue {
 	g++ bin/objects/main.o bin/objects/tree.o bin/objects/iterator.o -o bin/queue
 
 	time nice -n -5 bin/queue
+}
+
+echo "  priority_queue"
+function priority_queue {
+	g++ -c src/priority_queue/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
+	g++ -c src/priority_queue/list_queue.cpp -o bin/objects/list_queue.o $GCC_ARGS $1 $2 $3 $4 $5
+	g++ -c src/priority_queue/heap_queue.cpp -o bin/objects/heap_queue.o $GCC_ARGS $1 $2 $3 $4 $5
+
+	g++ bin/objects/main.o bin/objects/list_queue.o bin/objects/heap_queue.o -o bin/priority_queue
+
+	time nice -n -5 bin/priority_queue
+}
+
+echo "  quicksort"
+function quicksort {
+	g++ -c src/quicksort/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
+
+	g++ bin/objects/main.o -o bin/quicksort
+
+	time nice -n -5 bin/quicksort
 }
 
 echo ""
