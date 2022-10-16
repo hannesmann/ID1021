@@ -1,0 +1,62 @@
+hannes@desktop ~/Dev/ID1021 (main *) $ ./run-project.sh quicksort
+Available:
+  intro
+  calc [-D DEBUG]
+  binary_search
+  sort
+  linked_list
+  doubly_linked_list
+  trees
+  queue
+  priority_queue
+  quicksort
+
+Trying to build and run quicksort
+
+Benchmarking quicksort with array on random data...
+  n=100: 7579.67 ns (± 276.61 ns)
+  n=250: 38495.81 ns (± 580.11 ns)
+  n=500: 126169.63 ns (± 310.01 ns)
+  n=1000: 410184.93 ns (± 47301.19 ns)
+  n=2500: 2000496.16 ns (± 770654.36 ns)
+  n=5000: 4427196.17 ns (± 21227.97 ns)
+  n=10000: 23355232.30 ns (± 5412870.48 ns)
+  n=12500: 36972741.20 ns (± 4969.24 ns)
+  n=15000: 64937890.55 ns (± 18111778.53 ns)
+
+Benchmarking quicksort with linked list on random data...
+  n=100: 3656.33 ns (± 26.09 ns)
+  n=250: 10987.89 ns (± 37.41 ns)
+  n=500: 24474.50 ns (± 324.90 ns)
+  n=1000: 54874.05 ns (± 794.21 ns)
+  n=2500: 228710.46 ns (± 1121.22 ns)
+  n=5000: 390789.77 ns (± 113756.93 ns)
+  n=10000: 645854.45 ns (± 1927.03 ns)
+  n=12500: 1113943.94 ns (± 2420.62 ns)
+  n=15000: 1455569.14 ns (± 303.60 ns)
+
+Benchmarking quicksort with array on sorted data...
+  n=100: 3712.63 ns (± 324.19 ns)
+  n=250: 15796.53 ns (± 459.61 ns)
+  n=500: 59833.68 ns (± 1003.20 ns)
+  n=1000: 212489.23 ns (± 451.71 ns)
+  n=2500: 3232591.27 ns (± 2867.03 ns)
+  n=5000: 6718247.60 ns (± 1767126.76 ns)
+  n=10000: 19410461.83 ns (± 14544.43 ns)
+  n=12500: 27760067.47 ns (± 21773.97 ns)
+  n=15000: 44175375.38 ns (± 140673.46 ns)
+
+Benchmarking quicksort with linked list on sorted data...
+  n=100: 8827.57 ns (± 21.71 ns)
+  n=250: 111692.52 ns (± 40025.92 ns)
+  n=500: 582828.87 ns (± 3013.53 ns)
+  n=1000: 2146434.40 ns (± 633.80 ns)
+  n=2500: 7297942.85 ns (± 2157840.89 ns)
+  n=5000: 20624773.96 ns (± 809.00 ns)
+  n=10000: 81938145.79 ns (± 6659.85 ns)
+  n=12500: 127474549.57 ns (± 17303.43 ns)
+  n=15000: 239764632.97 ns (± 55192161.19 ns)
+
+real    2m30.172s
+user    2m29.967s
+sys     0m0.008s
