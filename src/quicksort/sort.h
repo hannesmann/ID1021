@@ -34,7 +34,7 @@ int partition_array(int* ptr, int n) {
 		}
 	}
 
-	/* after or equal becomes equal, always */
+	/* ptr[pivot] is now guaranteed to be equal to the pivot */
 	std::swap(ptr[0], ptr[after_or_equal_pivot]);
 	return after_or_equal_pivot;
 }
@@ -70,27 +70,20 @@ LinkedListReference<int> quicksort_linked_list(LinkedList<int>* list) {
 	LinkedListReference<int> after_or_equal_pivot = { nullptr, nullptr };
 
 	LinkedList<int>* next = list->next;
+
 	while(next) {
 		/* We need to edit next->next, so save this here */
 		LinkedList<int>* node_to_advance_to = next->next;
+		/* Push into two separate lists depending on condition */
+		bool smaller_than_pivot = next->item < list->item;
+		LinkedListReference<int>* list_to_push_into = smaller_than_pivot ? &before_pivot : &after_or_equal_pivot;
 
-		/* Push these into two separate lists */
-		if(next->item < list->item) {
-			next->next = before_pivot.begin;
-			before_pivot.begin = next;
+		next->next = list_to_push_into->begin;
+		list_to_push_into->begin = next;
 
-			/* Elements are pushed into the list backwards, so the beginning will eventually become the end */
-			if(!before_pivot.end) {
-				before_pivot.end = before_pivot.begin;
-			}
-		}
-		else {
-			next->next = after_or_equal_pivot.begin;
-			after_or_equal_pivot.begin = next;
-
-			if(!after_or_equal_pivot.end) {
-				after_or_equal_pivot.end = after_or_equal_pivot.begin;
-			}
+		/* Elements are pushed into the list backwards, so the beginning will eventually become the end */
+		if(!list_to_push_into->end) {
+			list_to_push_into->end = list_to_push_into->begin;
 		}
 
 		next = node_to_advance_to;
