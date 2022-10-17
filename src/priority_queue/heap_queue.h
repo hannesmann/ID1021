@@ -26,7 +26,11 @@ struct HeapQueueNode {
 	HeapQueueNode(int value) : value(value) { }
 
 	/* Add a value to the queue or increment its "reference counter" */
-	void add_or_increment(int value);
+	void add_or_update(int value, int* depth);
+	/* Bubble the current value to the top - returns false if this node will be destroyed */
+	bool promote();
+	/* Offset this value and balance the tree if applicable */
+	void offset_existing(int offest, int* depth);
 	/* Recursively deletes all subnodes (caller is responsible for deleting the node itself) */
 	void delete_tree();
 };
@@ -40,8 +44,9 @@ public:
 		}
 	}
 
-	void push(int value);
+	int push(int value) override;
 	optional<int> pop() override;
+	optional<int> pop_and_increment(int offset, int* depth) override;
 
 	const char* describe() override { return "HeapQueue"; }
 private:

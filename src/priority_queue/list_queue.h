@@ -19,13 +19,15 @@ public:
 		if(m_first) delete m_first;
 	}
 
-	void push(int value) override {
+	int push(int value) override {
 		if(m_order == ListQueue_FastAdd) {
 			unordered_push(value);
 		}
 		else {
 			ordered_push(value);
 		}
+
+		return 0;
 	}
 
 	optional<int> pop() override {
@@ -35,6 +37,21 @@ public:
 		else {
 			return ordered_pop();
 		}
+	}
+
+	optional<int> pop_and_increment(int offset, int* depth) override {
+		optional<int> pop_result = pop();
+
+		if(pop_result) {
+			int offset_from_pop = pop_result.value() + offset;
+			push(offset_from_pop);
+		}
+
+		if(depth) {
+			*depth = 0;
+		}
+
+		return pop_result;
 	}
 
 	const char* describe() override {

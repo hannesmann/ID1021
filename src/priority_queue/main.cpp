@@ -8,6 +8,7 @@
 
 #include "list_queue.h"
 #include "heap_queue.h"
+#include "heap_array_queue.h"
 
 /* Ensure we have good random number quality */
 static_assert(RAND_MAX == INT_MAX);
@@ -34,6 +35,11 @@ void test_priority_queue(PriorityQueue* queue) {
 	assert(queue->pop() == 1);
 	assert(queue->pop() == 1);
 	assert(queue->pop() == 8);
+	assert(!queue->pop().has_value());
+
+	queue->push(4);
+	assert(queue->pop_and_increment(2, nullptr) == 4);
+	assert(queue->pop() == 6);
 	assert(!queue->pop().has_value());
 
 	delete queue;
@@ -95,8 +101,9 @@ int main(int argc, char** argv) {
 	test_priority_queue(new PriorityListQueue(ListQueue_FastAdd));
 	test_priority_queue(new PriorityListQueue(ListQueue_FastRemove));
 	test_priority_queue(new HeapQueue());
+	test_priority_queue(new HeapArrayQueue(1000));
 
-	printf("Benchmarking queues...\n");
+	printf("\nBenchmarking queues...\n");
 	benchmark_priority_queue([] (int n) { return new PriorityListQueue(ListQueue_FastAdd); });
 	benchmark_priority_queue([] (int n) { return new PriorityListQueue(ListQueue_FastRemove); });
 	benchmark_priority_queue([] (int n) { return new HeapQueue(); });
