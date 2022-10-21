@@ -1,0 +1,197 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+
+\usepackage{float}
+
+\usepackage{tikz}
+
+\usepackage{amsmath}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest, scaled y ticks=false}
+
+\begin{document}
+
+\title{
+    \textbf{Hash tables}
+}
+\author{Hannes Mann}
+\date{2022-10-21}
+
+\maketitle
+
+\section*{Introduction}
+
+This is a report for the ninth assignment in the course ID1021 Algorithms and Data Structures.
+In this assignment, different methods of accessing a value from a key (such as with a hash table) should be explored.
+
+The implementation was done in C++ and was compiled with GCC using the {\tt -O0} parameter to ensure the compiler doesn't optimize away any part of the code.
+
+The source code can be found at: \href{https://github.com/hannesmann/ID1021/tree/d7466efeb483bf21add6e55fc028044168924d26/src/hashtable}{GitHub}.
+
+\section*{Mapping keys to values}
+
+In this assignment a list of sorted Swedish zip codes with associated properties was used to test the different methods.
+The zip code itself is the key (such as ''171 71'') and the properties store information about the area such as the name and population.
+
+So if we want to, for example, find out what the area with zip code 171 71 is called, we need to map ''171 71'' to ''SOLNA''.
+
+\subsection*{Linear and binary search}
+
+The simplest way to map a key to a value is to store all pairs in an array and use linear search to find a specific key and its associated value.
+This is very easy to understand but can take a long time to execute if the key we're looking for is located at the end in the array.
+
+\begin{minted}[tabsize=4,fontsize=\footnotesize]{cpp}
+for(ZipCode& zip : m_table) {
+	if(!strcmp(zip.codestr, key)) {
+		return &zip;
+	}
+}
+
+return nullptr;
+\end{minted}
+
+A better way to search for the key is to take advantage of the fact that our data is sorted and \mintinline{cpp}{strcmp(a, b)} returns the distance between the first non-matching character of $a$ and $b$.
+If $a_x > b_y$ then we know all keys below and equal to $b$ are not $a$, and if $a_x < b_y$ then we know all keys above and equal to $b$ are not $a$.
+Searching starts in the middle of the valid range and the range shrinks until we only have one key left to check.
+
+An optimization that can be done is to use an integer as a key instead of a string. All zip codes can be represented with \mintinline{cpp}{int} and comparing integers is easier than comparing strings.
+This gives a small speedup as will be shown later.
+
+\subsection*{Key as index}
+
+If we have an integer as the key we can create an array from $0 \dots max$ and store our values in this array.
+This enables instant lookup as we already know where every key is located, key $x$ is located at \mintinline{cpp}{array[x]}.
+
+$max$ in this case is $99999$, so the array won't take up a lot of space, but if we have potentially much larger keys (up to \mintinline{cpp}{INT_MAX}) a different approach is needed.
+
+\begin{minted}[tabsize=4,fontsize=\footnotesize]{cpp}
+m_lookup_table = new ZipCode*[MAX_ZIP];
+memset(m_lookup_table, 0, MAX_ZIP * sizeof(ZipCode*));
+
+for(ZipCode& zip : m_table) {
+	m_lookup_table[zip.codeint] = &zip;
+}
+
+...
+
+ZipCode* lookup(int key) {
+	return m_lookup_table[key];
+}
+\end{minted}
+
+\section*{Benchmarks}
+
+This benchmark shows the time it takes to lookup a value from a key using the different methods described in the previous chapter.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\textbf{k} & \textbf{linear str} & \textbf{binary str} & \textbf{linear int} & \textbf{binary int} & \textbf{index} \\
+\hline
+	111 15 & 42.9 ns & 92.9 ns & 41.0 ns & 91.7 ns & 22.8 ns \\
+	994 99 & 90900 ns & 98.5 ns & 75500 ns & 88.5 ns & 22.2 ns \\
+\hline
+\end{tabular}
+\caption{Execution time for finding a value with the key $k$.}
+\label{tab:table1}
+\end{table}
+
+As can be seen from the benchmark, both binary search and the index method perform well with all keys,
+while linear search takes a very long time to search the array when the key is located near the end.
+Using an integer gives a substantial speedup for linear search but it doesn't really matter for binary search,
+as the \mintinline{cpp}{strcmp} will stop at the first non-matching character so usually only the first character needs to be compared.
+
+\section*{Using a hash function as the index}
+
+The lookup method is very good, but since the array grows linearly as the key space grows it's not acceptable for large key spaces.
+What we can do is use a \emph{hash function} to map the key into a smaller potential range.
+Hashing a key is a lossy operation and so of course there will be some collisions when doing this, but the aim is that on average much less space will be needed for the same lookup speed.
+
+For this assignment a very simple hash function was used to map the key in the range $0 \dots 99999$ to a smaller range of $0 \dots max$:
+
+\begin{minted}[tabsize=4,fontsize=\footnotesize]{cpp}
+inline int hash(int key) {
+	return key % max;
+}
+\end{minted}
+
+The hard part is determining $max$ in a reasonable range (in this case $10000 \dots 20000$) so that the amount of collisions will be minimized.
+In other words, we want as many indexes as possible to map to only one key.
+
+To find the best $max$ value I created a simple heuristic that is used on every integer in the selected range:
+
+\begin{itemize}
+	\item \textbf{Does this value have a lower collision ceiling than the previous value?} If so, it's better.
+	\item \textbf{Otherwise, does this value have a lower ''cost'' than the previous value?} If so, it's better.
+\end{itemize}
+
+The ''collision ceiling'' is the highest number of keys that an index can map to. The ''cost'' is calculated by $n * collisions * 1.5$ where $n$ is the collision type (index that map to $n$ keys) and $collisions$ is the number of collisions for this type.
+
+This heuristic determinted that the best value for the zip codes in this assignment was modulo $16524$.
+This gives 7943 keys with unique indexes, 1614 keys with one collision and 118 keys with two collisions.
+
+\section*{With a hash table using buckets}
+
+Now that we have a hash function creating a hash table is simple.
+
+The first approach is to create an array that can store $max$ buckets.
+Every bucket can store zero, one or several values.
+When looking up a value we find the bucket with the hash function and use linear search on all values in the bucket to find the right one.
+
+\begin{minted}[tabsize=4,fontsize=\footnotesize]{cpp}
+ZipCode* ZipHashTable::get(int zip) {
+	return m_buckets[hash(zip)].find(zip);
+}
+
+...
+
+ZipCode* ZipHashTableBucket::find(int key) {
+	for(uint8_t i = 0; i < n; i++) {
+		if(codes[i]->codeint == key) {
+			return codes[i];
+		}
+	}
+
+	return nullptr;
+}
+\end{minted}
+
+Something to note is that we always need to use linear search in \mintinline{cpp}{find},
+even if we only have one value in the bucket, because it's possible the user is searching for an invalid key that happens to map to the same value as the one we have stored in the bucket.
+
+\section*{With a hash table using a larger array}
+
+A different approach is to store the values directly in a linear array where extra space has been allocated to account for potential collisions.
+
+For example, if we have a hash function in the range $0 \dots max$, and we expect one collision on average, we can store values in an array of $2 * n$ values and use linear search starting at the index $2 * hash(key)$.
+This should let us find values very quickly without having to allocate lots of buckets, especially if there are no collisions since values are always where you expect them to be.
+
+The only problem is that if we expected $x$ collisions, and we get $x+1$ collisions, we may need to do a lot of searching in order to find the value we're looking for.
+
+This is an example of how this approach scales as we allocate a larger array. We're looking for key $44395$ (chosen to cause collisions) in a hash table containing all keys from $11111 \dots 44444$.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{n} & \textbf{depth} \\
+\hline
+	16524 (expected duplicates=0) & 23 \\
+	33048 (expected duplicates=1) & 2 \\
+	49572 (expected duplicates=2) & 3 \\
+	66096 (expected duplicates=3) & 2 \\
+	82620 (expected duplicates=4) & 1 \\
+\hline
+\end{tabular}
+\caption{Number of keys we need to check before we find the right one with array size $n$.}
+\label{tab:table2}
+\end{table}
+
+\end{document}
