@@ -91,6 +91,15 @@ function queue {
 	time nice -n -5 bin/queue
 }
 
+echo "  quicksort"
+function quicksort {
+	g++ -c src/quicksort/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
+
+	g++ bin/objects/main.o -o bin/quicksort
+
+	time nice -n -5 bin/quicksort
+}
+
 echo "  priority_queue"
 function priority_queue {
 	g++ -c src/priority_queue/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
@@ -104,13 +113,13 @@ function priority_queue {
 	time nice -n -5 bin/priority_queue
 }
 
-echo "  quicksort"
-function quicksort {
-	g++ -c src/quicksort/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
+echo "  hashtable"
+function hashtable {
+	g++ -c src/hashtable/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
 
-	g++ bin/objects/main.o -o bin/quicksort
+	g++ bin/objects/main.o -o bin/hashtable
 
-	time nice -n -5 bin/quicksort
+	time nice -n -5 bin/hashtable src/hashtable/zipcodes.csv
 }
 
 echo ""

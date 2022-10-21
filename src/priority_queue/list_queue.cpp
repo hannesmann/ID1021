@@ -1,20 +1,24 @@
 #include "list_queue.h"
 
 /* O(1) */
-void PriorityListQueue::unordered_push(int value) {
+int PriorityListQueue::unordered_push(int value) {
 	if(m_last) {
 		m_last = m_last->next = new LinkedList<int>(value);
 	}
 	else {
 		m_first = m_last = new LinkedList<int>(value);
 	}
+
+	return 0;
 }
 
 /* O(n) */
-optional<int> PriorityListQueue::unordered_pop() {
+optional<PriorityQueueResult> PriorityListQueue::unordered_pop() {
 	if(!m_first) {
 		return nullopt;
 	}
+
+	int depth = 0;
 
 	/* Keep track of current element in iteration */
 	LinkedList<int>* next_to_current = nullptr;
@@ -25,6 +29,8 @@ optional<int> PriorityListQueue::unordered_pop() {
 	LinkedList<int>* smallest = m_first;
 
 	while(current) {
+		depth++;
+
 		if(current->item < smallest->item) {
 			smallest = current;
 			next_to_smallest = next_to_current;
@@ -48,11 +54,13 @@ optional<int> PriorityListQueue::unordered_pop() {
 	smallest->next = nullptr;
 	delete smallest;
 
-	return value;
+	return PriorityQueueResult { value, depth };
 }
 
 /* O(n) */
-void PriorityListQueue::ordered_push(int value) {
+int PriorityListQueue::ordered_push(int value) {
+	int depth = 0;
+
 	if(m_first) {
 		LinkedList<int>* new_node = new LinkedList<int>(value);
 
@@ -70,8 +78,10 @@ void PriorityListQueue::ordered_push(int value) {
 				}
 
 				new_node->next = current;
-				return;
+				return depth;
 			}
+
+			depth++;
 
 			next_to_current = current;
 			current = current->next;
@@ -83,24 +93,30 @@ void PriorityListQueue::ordered_push(int value) {
 	else {
 		m_first = m_last = new LinkedList<int>(value);
 	}
+
+	return depth;
 }
 
 /* O(1) */
-optional<int> PriorityListQueue::ordered_pop() {
-	optional<int> value = nullopt;
-
+optional<PriorityQueueResult> PriorityListQueue::ordered_pop() {
 	if(m_first) {
 		LinkedList<int>* first = m_first;
-		value = first->item;
+		int value = first->item;
+
+		/* Move forward in the queue */
 		m_first = first->next;
 
+		/* Delete the item we removed */
 		first->next = nullptr;
 		delete first;
+
+		/* If we have no first value, we have no last value either */
+		if(!m_first) {
+			m_last = nullptr;
+		}
+
+		return PriorityQueueResult { value, 0 };
 	}
 
-	if(!m_first) {
-		m_last = nullptr;
-	}
-
-	return value;
+	return nullopt;
 }

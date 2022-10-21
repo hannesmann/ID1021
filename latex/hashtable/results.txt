@@ -1,0 +1,110 @@
+hannes@desktop ~/Dev/ID1021 (main *) $ ./run-project.sh hashtable
+Available:
+  intro
+  calc [-D DEBUG]
+  binary_search
+  sort
+  linked_list
+  doubly_linked_list
+  trees
+  queue
+  quicksort
+  priority_queue
+  hashtable
+
+Trying to build and run hashtable
+
+Find '171 71': yes
+Find '171 71' (binary): yes
+Find 17171: yes
+Find 17171 (fast): yes
+Array filled: 9.68%
+
+Collisions for modulo 10000:
+  1 key(s) map to the same index: 4465
+  2 key(s) map to the same index: 2415
+  3 key(s) map to the same index: 1285
+  4 key(s) map to the same index: 740
+  5 key(s) map to the same index: 406
+  6 key(s) map to the same index: 203
+  7 key(s) map to the same index: 104
+  8 key(s) map to the same index: 48
+  9 key(s) map to the same index: 9
+
+Collisions for modulo 12500:
+  1 key(s) map to the same index: 5441
+  2 key(s) map to the same index: 2472
+  3 key(s) map to the same index: 1100
+  4 key(s) map to the same index: 461
+  5 key(s) map to the same index: 166
+  6 key(s) map to the same index: 33
+  7 key(s) map to the same index: 2
+
+Collisions for modulo 15000:
+  1 key(s) map to the same index: 5537
+  2 key(s) map to the same index: 2366
+  3 key(s) map to the same index: 1099
+  4 key(s) map to the same index: 474
+  5 key(s) map to the same index: 178
+  6 key(s) map to the same index: 21
+
+Collisions for modulo 17500:
+  1 key(s) map to the same index: 6577
+  2 key(s) map to the same index: 2206
+  3 key(s) map to the same index: 710
+  4 key(s) map to the same index: 163
+  5 key(s) map to the same index: 19
+
+Collisions for modulo 20000:
+  1 key(s) map to the same index: 6404
+  2 key(s) map to the same index: 2224
+  3 key(s) map to the same index: 753
+  4 key(s) map to the same index: 244
+  5 key(s) map to the same index: 50
+
+Collisions for modulo 25000:
+  1 key(s) map to the same index: 6870
+  2 key(s) map to the same index: 2171
+  3 key(s) map to the same index: 560
+  4 key(s) map to the same index: 74
+
+Collisions for modulo 50000:
+  1 key(s) map to the same index: 8492
+  2 key(s) map to the same index: 1183
+
+Collisions for modulo 99999:
+  1 key(s) map to the same index: 9675
+
+Collisions for modulo 16524:
+  1 key(s) map to the same index: 7943
+  2 key(s) map to the same index: 1614
+  3 key(s) map to the same index: 118
+
+Best for this table in range 10000-99999: mod 16524
+
+Testing hashtables...
+  ZipHashtable... Correct
+  ZipArrayHashTable... Correct
+
+Benchmarking lookup...
+  [lookup_linear_str] key='111 15': 42.90 ns (± 0.15 ns)
+  [lookup_linear_str] key='994 99': 90939.82 ns (± 644.75 ns)
+  [lookup_binary_str] key='111 15': 92.90 ns (± 0.35 ns)
+  [lookup_binary_str] key='994 99': 98.53 ns (± 0.20 ns)
+  [lookup_linear_int] key=11115: 40.97 ns (± 0.10 ns)
+  [lookup_linear_int] key=99499: 75499.70 ns (± 91.45 ns)
+  [lookup_binary_int] key=11115: 91.70 ns (± 0.45 ns)
+  [lookup_binary_int] key=99499: 88.50 ns (± 0.15 ns)
+  [lookup_fast_int] key=11115: 22.77 ns (± 0.05 ns)
+  [lookup_fast_int] key=99499: 22.20 ns (± 0.20 ns)
+
+Benchmarking ZipArrayHashTable depth...
+  Depth for expected_duplicates=0 (array_size=16524): 23
+  Depth for expected_duplicates=1 (array_size=33048): 2
+  Depth for expected_duplicates=2 (array_size=49572): 3
+  Depth for expected_duplicates=3 (array_size=66096): 2
+  Depth for expected_duplicates=4 (array_size=82620): 1
+
+real    0m1.022s
+user    0m1.016s
+sys     0m0.001s

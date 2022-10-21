@@ -3,44 +3,43 @@
 
 using std::swap;
 
-void HeapQueueNode::add_or_update(int value, int* depth) {
+int HeapQueueNode::add_or_update(int value) {
 	if(value == this->value) {
-		this->count++;
+		this->references++;
 	}
 	else {
 		HeapQueueSubNode* branch = (right.subnodes < left.subnodes) ? &right : &left;
 
+		/* If the value is smaller than the root (this->value) then add the value of this node further down the tree */
 		if(value < this->value) {
 			swap(value, this->value);
 		}
 
+		branch->subnodes++;
+
 		if(branch->node) {
-			branch->node->add_or_update(value, depth);
+			return 1 + branch->node->add_or_update(value);
 		}
 		else {
 			branch->node = new HeapQueueNode(value);
 		}
-
-		branch->subnodes++;
 	}
 
-	if(depth) {
-		(*depth)++;
-	}
+	return 0;
 }
 
 bool HeapQueueNode::promote() {
-	bool promote_left =
+	bool promote_right =
 		/* Condition A: We only have a single branch (or none) */
-		(left.subnodes && !right.subnodes) ||
+		(!left.subnodes && right.subnodes) ||
 		/* Condition B: Select the smallest branch */
-		(left.subnodes && right.subnodes && left.node->value < right.node->value);
+		(left.subnodes && right.subnodes && right.node->value < left.node->value);
 
-	HeapQueueSubNode* branch_to_promote = promote_left ? &left : &right;
+	HeapQueueSubNode* branch_to_promote = promote_right ? &right : &left;
 
-	if(branch_to_promote && branch_to_promote->node) {
+	if(branch_to_promote->subnodes) {
 		value = branch_to_promote->node->value;
-		count = branch_to_promote->node->count;
+		references = branch_to_promote->node->references;
 
 		if(!branch_to_promote->node->promote()) {
 			delete branch_to_promote->node;
@@ -55,105 +54,88 @@ bool HeapQueueNode::promote() {
 	return false;
 }
 
-void HeapQueueNode::offset_existing(int offset, int* depth) {
+int HeapQueueNode::offset(int n) {
 	/* Slow path */
-	if(count > 1) {
-		add_or_update(value + offset, depth);
-		count--;
+	if(references > 1) {
+		references--;
+		/* We need to create a new node here because now we have (n - 1) references to the original value and 1 reference to the new value */
+		return add_or_update(value + n);
 	}
 	/* Fast path */
 	else {
-		value += offset;
-
-		HeapQueueNode* current_node = this;
-		while(true) {
-			HeapQueueSubNode* branch_to_swap_with = nullptr;
-
-			if(current_node->left.subnodes &&
-				current_node->left.node->value < current_node->value) {
-				branch_to_swap_with = &current_node->left;
-			}
-			else if(current_node->right.subnodes &&
-				current_node->right.node->value < current_node->value) {
-				branch_to_swap_with = &current_node->right;
-			}
-
-			if(branch_to_swap_with) {
-				if(depth) {
-					(*depth)++;
-				}
-
-				swap(current_node->value, branch_to_swap_with->node->value);
-				swap(current_node->count, branch_to_swap_with->node->count);
-
-				current_node = branch_to_swap_with->node;
-			}
-			else {
-				break;
-			}
-		}
+		value += n;
+		return balance();
 	}
 }
 
-void HeapQueueNode::delete_tree() {
-	if(left.node) {
-		left.node->delete_tree();
-		left.subnodes--;
+int HeapQueueNode::balance() {
+	HeapQueueSubNode* branch_to_swap_with = nullptr;
 
-		delete left.node;
+	/* If we have a left branch AND the value is less than the current node */
+	if(left.subnodes &&
+		left.node->value < value) {
+		branch_to_swap_with = &left;
+	}
+	/* Check right branch too */
+	else if(right.subnodes &&
+		right.node->value < value) {
+		branch_to_swap_with = &right;
+	}
+
+	if(branch_to_swap_with) {
+		swap(value, branch_to_swap_with->node->value);
+		swap(references, branch_to_swap_with->node->references);
+
+		return 1 + branch_to_swap_with->node->balance();
+	}
+
+	return 0;
+}
+
+void HeapQueueNode::destroy() {
+	if(left.node) {
+		left.node->destroy();
 	}
 
 	if(right.node) {
-		right.node->delete_tree();
-		right.subnodes--;
-
-		delete right.node;
+		right.node->destroy();
 	}
 
-	left.node = right.node = nullptr;
+	delete this;
 }
 
 int HeapQueue::push(int value) {
-	int depth = 0;
-
 	if(m_root) {
-		m_root->add_or_update(value, &depth);
+		return m_root->add_or_update(value);
 	}
 	else {
 		m_root = new HeapQueueNode(value);
-		depth++;
+		return 0;
 	}
-
-	return depth;
 }
 
-optional<int> HeapQueue::pop() {
+optional<PriorityQueueResult> HeapQueue::pop() {
 	if(m_root) {
 		int value = m_root->value;
 
-		if(m_root->count > 1) {
-			m_root->count--;
+		if(m_root->references > 1) {
+			m_root->references--;
 		}
 		else if(!m_root->promote()) {
 			delete m_root;
 			m_root = nullptr;
 		}
 
-		return value;
+		return PriorityQueueResult { value, 0 };
 	}
 
 	return nullopt;
 }
 
-optional<int> HeapQueue::pop_and_increment(int offset, int* depth) {
-	if(depth) {
-		*depth = 0;
-	}
-
+optional<PriorityQueueResult> HeapQueue::increment(int offset) {
 	if(m_root) {
 		int value = m_root->value;
-		m_root->offset_existing(offset, depth);
-		return value;
+		return PriorityQueueResult { value, m_root->offset(offset) };
 	}
 
 	return nullopt;

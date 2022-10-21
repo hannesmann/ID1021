@@ -1,0 +1,76 @@
+hannes@desktop ~/Dev/ID1021 (main *) $ ./run-project.sh priority_queue
+Available:
+  intro
+  calc [-D DEBUG]
+  binary_search
+  sort
+  linked_list
+  doubly_linked_list
+  trees
+  queue
+  priority_queue
+  quicksort
+
+Trying to build and run priority_queue
+
+Verifying that queues work correctly...
+  PriorityListQueue O(1) Add... Correct
+  PriorityListQueue O(1) Remove... Correct
+  HeapQueue... Correct
+  HeapArrayQueue... Correct
+
+Benchmarking queues...
+  [PriorityListQueue O(1) Add] n=50: 31392.85 ns (± 9183.01 ns)
+  [PriorityListQueue O(1) Add] n=100: 61684.52 ns (± 9663.42 ns)
+  [PriorityListQueue O(1) Add] n=250: 217178.80 ns (± 61069.07 ns)
+  [PriorityListQueue O(1) Add] n=500: 608663.61 ns (± 98743.92 ns)
+  [PriorityListQueue O(1) Add] n=1000: 2198129.13 ns (± 340754.42 ns)
+  [PriorityListQueue O(1) Add] n=2500: 14024765.23 ns (± 4000464.83 ns)
+  [PriorityListQueue O(1) Add] n=5000: 42507553.42 ns (± 11998204.71 ns)
+
+  [PriorityListQueue O(1) Remove] n=50: 6770.51 ns (± 113.33 ns)
+  [PriorityListQueue O(1) Remove] n=100: 16409.49 ns (± 198.66 ns)
+  [PriorityListQueue O(1) Remove] n=250: 46494.27 ns (± 14875.48 ns)
+  [PriorityListQueue O(1) Remove] n=500: 114013.39 ns (± 2174.10 ns)
+  [PriorityListQueue O(1) Remove] n=1000: 987113.86 ns (± 2471.35 ns)
+  [PriorityListQueue O(1) Remove] n=2500: 5004021.21 ns (± 1859609.81 ns)
+  [PriorityListQueue O(1) Remove] n=5000: 14968929.32 ns (± 137954.62 ns)
+
+  [HeapQueue] n=50: 8221.19 ns (± 577.09 ns)
+  [HeapQueue] n=100: 16721.93 ns (± 931.09 ns)
+  [HeapQueue] n=250: 43538.79 ns (± 1073.01 ns)
+  [HeapQueue] n=500: 91489.85 ns (± 1886.01 ns)
+  [HeapQueue] n=1000: 194099.53 ns (± 4249.71 ns)
+  [HeapQueue] n=2500: 527892.47 ns (± 2563.78 ns)
+  [HeapQueue] n=5000: 1193847.61 ns (± 13562.38 ns)
+
+  [HeapArrayQueue] n=50: 11197.38 ns (± 624.84 ns)
+  [HeapArrayQueue] n=100: 22504.16 ns (± 1228.59 ns)
+  [HeapArrayQueue] n=250: 60338.34 ns (± 4459.79 ns)
+  [HeapArrayQueue] n=500: 120729.62 ns (± 2462.44 ns)
+  [HeapArrayQueue] n=1000: 248800.71 ns (± 5192.97 ns)
+  [HeapArrayQueue] n=2500: 668675.06 ns (± 7873.07 ns)
+  [HeapArrayQueue] n=5000: 1423435.76 ns (± 8968.83 ns)
+
+
+Benchmarking queue depth...
+  [HeapQueue] n=50: push { average=4.72,min=0,max=5 } increment { average=3.45,min=0,max=5 }
+  [HeapQueue] n=100: push { average=5.83,min=0,max=6 } increment { average=4.65,min=0,max=6 }
+  [HeapQueue] n=250: push { average=6.67,min=2,max=7 } increment { average=5.17,min=0,max=7 }
+  [HeapQueue] n=500: push { average=7.23,min=0,max=8 } increment { average=6.03,min=0,max=8 }
+  [HeapQueue] n=1000: push { average=7.65,min=1,max=9 } increment { average=6.15,min=0,max=9 }
+  [HeapQueue] n=2500: push { average=9.48,min=1,max=10 } increment { average=7.80,min=0,max=10 }
+  [HeapQueue] n=5000: push { average=10.27,min=0,max=11 } increment { average=8.05,min=0,max=11 }
+
+  [HeapArrayQueue] n=50: push { average=1.28,min=0,max=5 } increment { average=2.83,min=0,max=6 }
+  [HeapArrayQueue] n=100: push { average=1.20,min=0,max=6 } increment { average=3.30,min=0,max=6 }
+  [HeapArrayQueue] n=250: push { average=0.78,min=0,max=3 } increment { average=4.40,min=0,max=8 }
+  [HeapArrayQueue] n=500: push { average=1.02,min=0,max=7 } increment { average=5.48,min=0,max=9 }
+  [HeapArrayQueue] n=1000: push { average=1.28,min=0,max=5 } increment { average=6.30,min=0,max=10 }
+  [HeapArrayQueue] n=2500: push { average=1.38,min=0,max=6 } increment { average=7.90,min=0,max=10 }
+  [HeapArrayQueue] n=5000: push { average=1.60,min=0,max=5 } increment { average=8.45,min=0,max=11 }
+
+
+real    0m20.876s
+user    0m20.847s
+sys     0m0.001s

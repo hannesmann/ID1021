@@ -21,16 +21,14 @@ public:
 
 	int push(int value) override {
 		if(m_order == ListQueue_FastAdd) {
-			unordered_push(value);
+			return unordered_push(value);
 		}
 		else {
-			ordered_push(value);
+			return ordered_push(value);
 		}
-
-		return 0;
 	}
 
-	optional<int> pop() override {
+	optional<PriorityQueueResult> pop() override {
 		if(m_order == ListQueue_FastAdd) {
 			return unordered_pop();
 		}
@@ -39,19 +37,14 @@ public:
 		}
 	}
 
-	optional<int> pop_and_increment(int offset, int* depth) override {
-		optional<int> pop_result = pop();
+	optional<PriorityQueueResult> increment(int offset) override {
+		optional<PriorityQueueResult> result = pop();
 
-		if(pop_result) {
-			int offset_from_pop = pop_result.value() + offset;
-			push(offset_from_pop);
+		if(result) {
+			return PriorityQueueResult { result.value().value, push(result.value().value + offset) };
 		}
 
-		if(depth) {
-			*depth = 0;
-		}
-
-		return pop_result;
+		return nullopt;
 	}
 
 	const char* describe() override {
@@ -63,11 +56,11 @@ public:
 		}
 	}
 private:
-	void unordered_push(int value);
-	optional<int> unordered_pop();
+	int unordered_push(int value);
+	optional<PriorityQueueResult> unordered_pop();
 
-	void ordered_push(int value);
-	optional<int> ordered_pop();
+	int ordered_push(int value);
+	optional<PriorityQueueResult> ordered_pop();
 
 	LinkedList<int>* m_first = nullptr;
 	LinkedList<int>* m_last = nullptr;

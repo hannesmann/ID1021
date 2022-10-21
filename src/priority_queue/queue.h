@@ -4,17 +4,26 @@
 
 using std::optional;
 using std::nullopt;
+using std::make_optional;
+
+/* Contains the value and benchmark statistics for priority queue */
+struct PriorityQueueResult {
+	/* Value returned from the queue */
+	int value;
+	/* The depth required to travel down the tree, if applicable */
+	int depth;
+};
 
 class PriorityQueue {
 public:
 	virtual ~PriorityQueue() {}
 
-	/* Adds an item to the queue - returns iterations required to push the element */
+	/* Adds an item to the queue - returns depth traveled down the tree if applicable */
 	virtual int push(int value) = 0;
 	/* Removes the item with the highest priority (smaller integers are removed first) */
-	virtual optional<int> pop() = 0;
+	virtual optional<PriorityQueueResult> pop() = 0;
 	/* Removes the item with the highest priority and then adds it back with specified offest */
-	virtual optional<int> pop_and_increment(int offset, int* depth) = 0;
+	virtual optional<PriorityQueueResult> increment(int offset) = 0;
 
 	/* Name to show in logs */
 	virtual const char* describe() = 0;
