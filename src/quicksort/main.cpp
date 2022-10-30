@@ -80,24 +80,14 @@ void benchmark_quicksort_linked_list(int* random_numbers, int n, int*, LinkedLis
 	*nodes = quicksort_linked_list(*nodes).begin;
 }
 
-#define REPEATS 50
+#define REPEATS 20
 
 /* Receives a function F(random_numbers, n, array_storage, &node_storage) */
 void benchmark_quicksort(std::function<void(int*, int n, int*, LinkedList<int>**)> f, bool sorted_data) {
-	static int elemcount[] = { 100, 250, 500, 1000, 2500, 5000, 10000, 12500, 15000 };
+	static int elemcount[] = { 100, 250, 500, 1000, 2500, 5000, 10000, 12500, 15000, 25000, 50000, 100000 };
 
 	for(unsigned long i = 0; i < sizeof(elemcount) / sizeof(int); i++) {
 		int n = elemcount[i];
-
-		int* random_numbers = new int[n];
-		for(int j = 0; j < n; j++) {
-			random_numbers[j] = rand() % n;
-		}
-
-		if(sorted_data) {
-			std::sort(random_numbers, random_numbers + n);
-		}
-
 		/* Allocate storage for benchmarks to run as quickly as possible */
 		int* array = new int[n];
 
@@ -111,6 +101,15 @@ void benchmark_quicksort(std::function<void(int*, int n, int*, LinkedList<int>**
 		double max = 0;
 
 		for(int i = 1; i <= 4; i++) {
+			int* random_numbers = new int[n];
+			for(int j = 0; j < n; j++) {
+				random_numbers[j] = rand() % n;
+			}
+
+			if(sorted_data) {
+				std::sort(random_numbers, random_numbers + n);
+			}
+
 			long tstart = time_ns();
 
 			for(int repeat = 0; repeat < REPEATS; repeat++) {
@@ -128,6 +127,8 @@ void benchmark_quicksort(std::function<void(int*, int n, int*, LinkedList<int>**
 					max = tdiff;
 				}
 			}
+
+			delete[] random_numbers;
 		}
 
 		double avg = (min + max) / 2.0;
@@ -135,8 +136,6 @@ void benchmark_quicksort(std::function<void(int*, int n, int*, LinkedList<int>**
 
 		delete nodes;
 		delete[] array;
-
-		delete[] random_numbers;
 	}
 }
 
@@ -146,7 +145,7 @@ int main(int argc, char** argv) {
 	sanity_checks();
 
 	printf("Benchmarking quicksort with array on random data...\n");
-	benchmark_quicksort(&benchmark_quicksort_array, false);
+	//benchmark_quicksort(&benchmark_quicksort_array, false);
 	printf("\nBenchmarking quicksort with linked list on random data...\n");
 	benchmark_quicksort(&benchmark_quicksort_linked_list, false);
 
