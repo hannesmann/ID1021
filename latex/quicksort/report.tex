@@ -21,7 +21,7 @@
     \textbf{Quicksort}
 }
 \author{Hannes Mann}
-\date{2022-10-16}
+\date{2022-10-30}
 
 \maketitle
 
@@ -32,7 +32,7 @@ In this assignment, the quicksort algorithm's performance characteristics should
 
 The implementation was done in C++ and was compiled with GCC using the {\tt -O0} parameter to ensure the compiler doesn't optimize away any part of the code.
 
-The source code can be found at: \href{https://github.com/hannesmann/ID1021/tree/04c951009ff796b267d84efad875b24ab77aa892/src/quicksort}{GitHub}.
+The source code can be found at: \href{https://github.com/hannesmann/ID1021/tree/ce3ccd74515c135930f907e790a124e761d84be9/src/quicksort}{GitHub}.
 
 \section*{Implementing quicksort}
 
@@ -86,7 +86,7 @@ The implementation keeps track of tail pointers for all lists so appending happe
 
 \section*{Benchmarks}
 
-Benchmarking was done by generating $n$ random numbers and comparing the time it takes to sort a list containing these numbers. The same sequence is used for the array and linked list implementation.
+Benchmarking was done by generating $n$ random numbers and comparing the time it takes to sort a list containing these numbers. Four random sequences are tested for the array and linked list implementation.
 
 \begin{table}[H]
 \centering
@@ -94,15 +94,18 @@ Benchmarking was done by generating $n$ random numbers and comparing the time it
 \hline
 \textbf{n} & \textbf{array} & \textbf{linked list} \\
 \hline
-	100 & 0.0076 ms & 0.0037 ms  \\
-	250 & 0.038 ms & 0.011 ms  \\
-	500 & 0.13 ms & 0.024 ms  \\
-	1000 & 0.41 ms & 0.055 ms  \\
-	2500 & 2.0 ms & 0.23 ms  \\
-	5000 & 4.4 ms & 0.39 ms  \\
-	10000 & 23 ms & 0.65 ms  \\
-	12500 & 37 ms & 1.1 ms  \\
-	15000 & 65 ms & 1.5 ms  \\
+	100 & 0.0040 ms & 0.0024 ms  \\
+	250 & 0.018 ms & 0.0086 ms  \\
+	500 & 0.061 ms & 0.018 ms  \\
+	1000 & 0.21 ms & 0.063 ms  \\
+	2500 & 1.2 ms & 0.17 ms  \\
+	5000 & 4.5 ms & 0.36 ms  \\
+	10000 & 18 ms & 0.82 ms  \\
+	12500 & 28 ms & 1.1 ms  \\
+	15000 & 40 ms & 1.4 ms  \\
+	25000 & 107 ms & 3.0 ms \\
+	50000 & 433 ms & 7.4 ms \\
+	100000 & N/A & 17 ms \\
 \hline
 \end{tabular}
 \caption{Execution time for sorting a random list with $n$ elements.}
@@ -118,23 +121,46 @@ Benchmarking was done by generating $n$ random numbers and comparing the time it
 	ylabel={t},
 	grid,
 	xmin=100,
-	xmax=15000,
+	xmax=50000,
 	ymin=0,
-	ymax=65,
+	ymax=433,
 	y label style={rotate=-90},
 	legend style={at={(0,1)},anchor=north west}
 ]
 \addplot[red, no marks, densely dashed] table[col sep=comma]{plot1-1.csv};
 \addlegendentry{array}
-\addplot[blue, no marks, densely dashed] table[col sep=comma]{plot1-2.csv};
+\end{axis}
+\end{tikzpicture}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}
+[
+	xlabel={n},
+	ylabel={t},
+	grid,
+	xmin=100,
+	xmax=100000,
+	ymin=0,
+	ymax=17,
+	y label style={rotate=-90},
+	legend style={at={(0,1)},anchor=north west}
+]
+\addplot[red, no marks, densely dashed] table[col sep=comma]{plot1-2.csv};
 \addlegendentry{linked list}
 \end{axis}
 \end{tikzpicture}
 \end{table}
 
 As can be seen from the results the linked list implementation ends up a lot faster when sorting random arrays.
-The linked list quicksort scaled roughly linearly ($O(n)$) but the array implementation needs many loop iterations for every element and this will scale with $n$ as the search starts in both ends of the array.
-The expected average performance of quicksort is $O(n \log n)$ but the partitioning is clearly the dominating factor here for both implementations. Recursion only needs to happen a few times on average.
+The linked list quicksort scaled roughly with the average case performance for quicksort ($O(n \log n)$).
+This is hard to see on the graph since $\log n$ is very small even at the largest array size but if the performance scaled linearly ($O(n)$)
+the jump from 50000 to 100000 should have ended up at around $14$ ms, not $17$ ms.
+
+The array implementation is suboptimal and needs many loop iterations for every element. This will scale with $n$ as the search starts in both ends of the array.
+Sorting 100000 elements wasn't even possible in a reasonable amount of time, so only array sizes up to 50000 were tested.
 
 \subsection*{Sorted data}
 

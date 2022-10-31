@@ -122,6 +122,15 @@ function hashtable {
 	time nice -n -5 bin/hashtable src/hashtable/zipcodes.csv
 }
 
+echo "  graph"
+function graph {
+	g++ -c src/graph/main.cpp -o bin/objects/main.o $GCC_ARGS $1 $2 $3 $4 $5
+
+	g++ bin/objects/main.o -o bin/graph
+
+	time nice -n -5 bin/graph src/graph/trains.csv
+}
+
 echo ""
 echo "Trying to build and run $1"
 echo ""
