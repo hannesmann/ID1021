@@ -80,11 +80,8 @@ void benchmark_priority_queue(std::function<PriorityQueue*(int)> f) {
 				for(int j = 0; j < n; j++) {
 					queue->push(rand() % (10*n));
 				}
-				for(int j = 0; j < n - 1; j++) {
+				for(int j = 0; j < n; j++) {
 					queue->pop();
-				}
-				for(int j = 0; j < n / 4; j++) {
-					queue->increment(4);
 				}
 			}
 
@@ -132,8 +129,6 @@ void benchmark_priority_queue_depth(std::function<PriorityQueue*(int)> f, long s
 
 		for(int repeat = 0; repeat < REPEATS; repeat++) {
 			PriorityQueue* queue = f(64 + n);
-
-			// TODO?
 
 			for(int j = 0; j < 64 + n; j++) {
 				queue->push(rand() % 100);

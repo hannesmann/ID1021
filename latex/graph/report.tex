@@ -1,0 +1,191 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+
+\usepackage{float}
+
+\usepackage{tikz}
+
+\usepackage{amsmath}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest, scaled y ticks=false}
+
+\begin{document}
+
+\title{
+    \textbf{Graphs}
+}
+\author{Hannes Mann}
+\date{2022-10-31}
+
+\maketitle
+
+\section*{Introduction}
+
+This is a report for the last assignment in the course ID1021 Algorithms and Data Structures.
+In this assignment, a graph should be used to model the railroad network of Sweden and to find the shortest path to various destinations.
+
+The implementation was done in C++ and was compiled with GCC using the {\tt -O0} parameter to ensure the compiler doesn't optimize away any part of the code.
+
+The source code can be found at: \href{https://github.com/hannesmann/ID1021/tree/6701e8f191ca4f62e3bd1ddb16cfa4cc649011c9/src/graph38807}{GitHub}.
+
+\section*{Modeling a railroad network as a graph}
+
+A graph is a very general data structure containing nodes with connections between them.
+The graph can have connections that only apply in one direction (so A to B might be connected but B to A are not),
+but in this assignment the train can always travel both directions so this is not applicable.
+
+The railroad network is stored in a CSV file as a list of connections from A to B and the time it takes to travel between the two cities.
+The program reads this file and for each line it adds both city A and B to a hashtable (or fetches the city if it already exists).
+
+Each city contains its own name and a list of connections to other cities.
+
+\begin{minted}[tabsize=4,fontsize=\footnotesize]{cpp}
+/* An edge in the graph */
+struct Connection {
+	City* city;
+	int distance;
+};
+
+/* A node in the graph */
+struct City {
+	char name[MAX_NAME_LENGTH + 1];
+	vector<Connection> connections;
+};
+\end{minted}
+
+The program will make sure to add the connection A to B and the connection B to A (both of these have the same distance, naturally) so that all connections can travel both ways.
+
+\section*{Finding the shortest path}
+
+If we want to find the shortest path from A to Z, there may not be a direct connection between them,
+so we can look at all the cities A is connected to and recursively search the graph in \emph{depth-first} order until we eventually end up at Z.
+
+This method works well for some paths but it runs into a problem where the program will start looping.
+For example, if A is connected to B and B is connected to A the program will try traveling from A to B to A to B $\ldots$ forever.
+This can be solved by specifying the maximum travel time so that the program breaks out of the loop.
+
+Searching for various train journeys using this method reveals some obvious flaws.
+First off, setting the maximum travel time higher than $\approx 350$ minutes makes the program take a really long time to execute since it sits in a loop for longer and longer.
+
+We limit the travel time to 350 minutes and see what we find:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{A} & \textbf{B} & \textbf{time} & \textbf{found?} \\
+\hline
+	Malmö & Göteborg & 27 $\mu$s & yes \\
+	Göteborg & Stockholm & 20 $\mu$s & yes \\
+	Malmö & Stockholm & 26 $\mu$s & yes \\
+	Stockholm & Sundsvall & 14 $\mu$s & yes \\
+	Stockholm & Umeå & 5900 $\mu$s & no \\
+	Göteborg & Sundsvall & 8300 $\mu$s & no \\
+	Sundsvall & Umeå & 0.0084 $\mu$s & yes \\
+	Umeå & Göteborg & 0.41 $\mu$s & no \\
+	Göteborg & Umeå & 8100 $\mu$s & no \\
+	Malmö & Kiruna & 10300 $\mu$s & no \\
+\hline
+\end{tabular}
+\caption{Time for finding the shortest path from A to B (''naive'' method).}
+\label{tab:table1}
+\end{table}
+
+This method isn't very good as it won't be able to find any journeys that take longer than 350 minutes, and it gets stuck in a loop for a long time in those scenarios.
+
+\subsection*{Remembering cities we have already traveled to}
+
+We can easily solve the issue of infinite loops by keeping track of cities we've visited before.
+There are 54 cities in our input data, and each city is visited at most once, so we save an array of up to 54 cities that are already visited.
+
+If we try to search from A to B, and we have already visited A before, we exit the method by saying there is no journey available on this path.
+
+Since there are no more infinite loops, we can also increase our maximum travel time to a much higher value.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{A} & \textbf{B} & \textbf{d=350} & \textbf{d=10000} \\
+\hline
+	Malmö & Göteborg & 0.060 $\mu$s & 840 $\mu$s \\
+	Göteborg & Stockholm & 0.11 $\mu$s & 410 $\mu$s \\
+	Malmö & Stockholm & 0.07 $\mu$s & 840 $\mu$s \\
+	Stockholm & Sundsvall & 0.15 $\mu$s & 600 $\mu$s \\
+	Stockholm & Umeå & N/A & 870 $\mu$s \\
+	Göteborg & Sundsvall & N/A & 760 $\mu$s \\
+	Sundsvall & Umeå & 0.0055 $\mu$s & 2100 $\mu$s \\
+	Umeå & Göteborg & N/A & 770 $\mu$s \\
+	Göteborg & Umeå & N/A & 1100 $\mu$s \\
+	Malmö & Kiruna & N/A & 3500 $\mu$s \\
+\hline
+\end{tabular}
+\caption{Time for finding the shortest path from A to B (''paths'' method).}
+\label{tab:table2}
+\end{table}
+
+Increasing our maximum travel time to 10000 minutes allows us to travel anywhere in Sweden but since the algorithm is allowed to explore more paths it will obviously take longer to execute.
+A better way to do this is to let the algorithm travel as long as it wants at first, and then we base our maximum travel time on the shortest path. It's not worth exploring another path if we already know of a shorter path.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{A} & \textbf{B} & \textbf{time} \\
+\hline
+	Malmö & Göteborg & 490 $\mu$s \\
+	Göteborg & Stockholm & 32 $\mu$s \\
+	Malmö & Stockholm & 72 $\mu$s \\
+	Stockholm & Sundsvall & 590 $\mu$s \\
+	Stockholm & Umeå & 900 $\mu$s \\
+	Göteborg & Sundsvall & 590 $\mu$s \\
+	Sundsvall & Umeå & 2300 $\mu$s \\
+	Umeå & Göteborg & 490 $\mu$s \\
+	Göteborg & Umeå & 1100 $\mu$s \\
+	Malmö & Kiruna & 2563 $\mu$s \\
+\hline
+\end{tabular}
+\caption{Time for finding the shortest path from A to B (better ''paths'' method).}
+\label{tab:table3}
+\end{table}
+
+This gives a big speedup in some cases with no regressions, but it will obviously depend on how the connections are organized in our input data.
+The path that is explored first determines how long the rest of the algorithm will take to execute. We might get lucky and find a short path early, or we might have to travel through the whole country for our first try.
+
+\section*{Extrapolating execution time based on travel time}
+
+The execution time of the algorithm depends more on the complexity of the path we have to take but it should be possible to estimate how long it would take to find a path for a much longer train ride.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{destination} & \textbf{travel time} & \textbf{execution time} \\
+\hline
+	Lund & 13 min & 0 ms \\
+	Hässleholm & 43 min & 0 ms \\
+	Alvesta & 81 min & 100 ms \\
+	Linköping & 169 min & 245 ms \\
+	Uppsala & 324 min & 103 ms \\
+	Gävle & 383 min & 185 ms \\
+	Sundsvall & 600 min & 484 ms \\
+	Umeå & 790 min & 843 ms \\
+	Luleå & 1002 min & 1260 ms \\
+	Kiruna & 1162 min & 1013 ms \\
+\hline
+\end{tabular}
+\caption{Execution time to travel from Malmö to the destination.}
+\label{tab:table4}
+\end{table}
+
+If we discard the destinations with very straightforward paths (Malmö $\rightarrow$ Lund $\rightarrow$ Hässleholm) we can see that the execution time roughly correlates with the travel time.
+
+Averaging everything gives us $T_{execution} \approx 0.9 * T_{travel}$. Traveling from, for example, Malmö to Athens takes around a day and 20 hours. This is 2640 minutes so it should take us approximately 2376 ms to find the shortest path from Malmö to Athens.
+
+\end{document}

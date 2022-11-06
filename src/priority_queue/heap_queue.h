@@ -17,16 +17,14 @@ struct HeapQueueSubNode {
 struct HeapQueueNode {
 	/* Value of this node */
 	int value = 0;
-	/* Number of times this value is contained in the queue - this is necessary to be able to push the same value multiple times */
-	int references = 1;
 
 	HeapQueueSubNode left;
 	HeapQueueSubNode right;
 
 	HeapQueueNode(int value) : value(value) { }
 
-	/* Add a value to the queue or increment its "reference counter", returns depth traveled */
-	int add_or_update(int value);
+	/* Add a value to the queue, returns depth traveled */
+	int add(int value);
 	/* Offset this value and balance the tree if applicable, returns depth traveled */
 	int offset(int n);
 

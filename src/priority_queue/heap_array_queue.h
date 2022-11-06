@@ -42,10 +42,6 @@ private:
 		}
 	}
 
-	/* If this node has a left/right branch */
-	inline bool has_branch(int node, bool right) {
-		return m_offset >= find_branch(node, right);
-	}
 	/* Find the left and right branch of a node */
 	inline int find_branch(int node, bool right) {
 		return (node * 2) + 1 + right;

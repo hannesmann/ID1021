@@ -1,0 +1,266 @@
+hannes@desktop ~/Dev/ID1021 (main *) $ ./run-project.sh graph
+Available:
+  intro
+  calc [-D DEBUG]
+  binary_search
+  sort
+  linked_list
+  doubly_linked_list
+  trees
+  queue
+  quicksort
+  priority_queue
+  hashtable
+  graph
+
+Trying to build and run graph
+
+City 'Hallsberg' with 3 connections
+  31 minutes to 'Katrineholm'
+  19 minutes to 'Örebro'
+  42 minutes to 'Skövde'
+City 'Uppsala' with 3 connections
+  51 minutes to 'Stockholm'
+  59 minutes to 'Gävle'
+  35 minutes to 'Sala'
+City 'Storvik' with 3 connections
+  42 minutes to 'Avesta'
+  63 minutes to 'Borlänge'
+  30 minutes to 'Gävle'
+City 'Karlskrona' with 2 connections
+  95 minutes to 'Kristianstad'
+  44 minutes to 'Emmaboda'
+City 'Jönköping' with 2 connections
+  45 minutes to 'Falköping'
+  34 minutes to 'Nässjö'
+City 'Ånge' with 3 connections
+  73 minutes to 'Sundsvall'
+  64 minutes to 'Östersund'
+  165 minutes to 'Gävle'
+City 'Gävle' with 4 connections
+  59 minutes to 'Uppsala'
+  217 minutes to 'Sundsvall'
+  165 minutes to 'Ånge'
+  30 minutes to 'Storvik'
+City 'Luleå' with 1 connections
+  26 minutes to 'Boden'
+City 'Alvesta' with 4 connections
+  33 minutes to 'Nässjö'
+  38 minutes to 'Hässleholm'
+  39 minutes to 'Värnamo'
+  50 minutes to 'Emmaboda'
+City 'Trollhättan' with 3 connections
+  53 minutes to 'Uddevalla'
+  44 minutes to 'Göteborg'
+  103 minutes to 'Herrljunga'
+City 'Emmaboda' with 3 connections
+  50 minutes to 'Alvesta'
+  29 minutes to 'Kalmar'
+  44 minutes to 'Karlskrona'
+City 'Gällivare' with 3 connections
+  119 minutes to 'Boden'
+  67 minutes to 'Kiruna'
+  831 minutes to 'Östersund'
+City 'Arboga' with 3 connections
+  21 minutes to 'Örebro'
+  28 minutes to 'Västerås'
+  26 minutes to 'Eskilstuna'
+City 'Kristianstad' with 2 connections
+  26 minutes to 'Hässleholm'
+  95 minutes to 'Karlskrona'
+City 'Kiruna' with 1 connections
+  67 minutes to 'Gällivare'
+City 'Värnamo' with 3 connections
+  99 minutes to 'Halmstad'
+  39 minutes to 'Alvesta'
+  59 minutes to 'Nässjö'
+City 'Fagersta' with 3 connections
+  24 minutes to 'Avesta'
+  50 minutes to 'Frövi'
+  45 minutes to 'Ludvika'
+City 'Mora' with 2 connections
+  74 minutes to 'Borlänge'
+  161 minutes to 'Sveg'
+City 'Stockholm' with 3 connections
+  21 minutes to 'Södertälje'
+  90 minutes to 'Västerås'
+  51 minutes to 'Uppsala'
+City 'Hässleholm' with 4 connections
+  38 minutes to 'Alvesta'
+  30 minutes to 'Lund'
+  26 minutes to 'Kristianstad'
+  39 minutes to 'Åstorp'
+City 'Södertälje' with 4 connections
+  21 minutes to 'Stockholm'
+  59 minutes to 'Norrköping'
+  47 minutes to 'Katrineholm'
+  40 minutes to 'Eskilstuna'
+City 'Sveg' with 2 connections
+  161 minutes to 'Mora'
+  241 minutes to 'Östersund'
+City 'Kalmar' with 2 connections
+  29 minutes to 'Emmaboda'
+  201 minutes to 'Linköping'
+City 'Herrljunga' with 4 connections
+  35 minutes to 'Skövde'
+  39 minutes to 'Göteborg'
+  15 minutes to 'Falköping'
+  103 minutes to 'Trollhättan'
+City 'Sala' with 2 connections
+  35 minutes to 'Uppsala'
+  19 minutes to 'Avesta'
+City 'Avesta' with 4 connections
+  42 minutes to 'Storvik'
+  19 minutes to 'Sala'
+  48 minutes to 'Borlänge'
+  24 minutes to 'Fagersta'
+City 'Varberg' with 2 connections
+  39 minutes to 'Göteborg'
+  29 minutes to 'Halmstad'
+City 'Mjölby' with 2 connections
+  16 minutes to 'Linköping'
+  39 minutes to 'Nässjö'
+City 'Eskilstuna' with 4 connections
+  33 minutes to 'Västerås'
+  40 minutes to 'Södertälje'
+  46 minutes to 'Katrineholm'
+  26 minutes to 'Arboga'
+City 'Helsingborg' with 2 connections
+  23 minutes to 'Åstorp'
+  35 minutes to 'Lund'
+City 'Boden' with 3 connections
+  186 minutes to 'Umeå'
+  119 minutes to 'Gällivare'
+  26 minutes to 'Luleå'
+City 'Ludvika' with 3 connections
+  86 minutes to 'Frövi'
+  45 minutes to 'Fagersta'
+  35 minutes to 'Borlänge'
+City 'Lund' with 4 connections
+  30 minutes to 'Hässleholm'
+  13 minutes to 'Malmö'
+  36 minutes to 'Åstorp'
+  35 minutes to 'Helsingborg'
+City 'Sundsvall' with 3 connections
+  217 minutes to 'Gävle'
+  73 minutes to 'Ånge'
+  190 minutes to 'Umeå'
+City 'Falköping' with 3 connections
+  16 minutes to 'Skövde'
+  15 minutes to 'Herrljunga'
+  45 minutes to 'Jönköping'
+City 'Borlänge' with 4 connections
+  74 minutes to 'Mora'
+  63 minutes to 'Storvik'
+  48 minutes to 'Avesta'
+  35 minutes to 'Ludvika'
+City 'Strömstad' with 1 connections
+  80 minutes to 'Uddevalla'
+City 'Örebro' with 3 connections
+  19 minutes to 'Hallsberg'
+  21 minutes to 'Arboga'
+  21 minutes to 'Frövi'
+City 'Katrineholm' with 4 connections
+  47 minutes to 'Södertälje'
+  25 minutes to 'Norrköping'
+  31 minutes to 'Hallsberg'
+  46 minutes to 'Eskilstuna'
+City 'Åstorp' with 4 connections
+  36 minutes to 'Halmstad'
+  36 minutes to 'Lund'
+  23 minutes to 'Helsingborg'
+  39 minutes to 'Hässleholm'
+City 'Linköping' with 3 connections
+  24 minutes to 'Norrköping'
+  16 minutes to 'Mjölby'
+  201 minutes to 'Kalmar'
+City 'Halmstad' with 3 connections
+  29 minutes to 'Varberg'
+  36 minutes to 'Åstorp'
+  99 minutes to 'Värnamo'
+City 'Östersund' with 3 connections
+  64 minutes to 'Ånge'
+  241 minutes to 'Sveg'
+  831 minutes to 'Gällivare'
+City 'Uddevalla' with 3 connections
+  80 minutes to 'Strömstad'
+  74 minutes to 'Göteborg'
+  53 minutes to 'Trollhättan'
+City 'Norrköping' with 3 connections
+  59 minutes to 'Södertälje'
+  24 minutes to 'Linköping'
+  25 minutes to 'Katrineholm'
+
+Benchmarking 'naive' method...
+  [Malmö Göteborg, found: yes] 10300300.00 ns
+  [Göteborg Stockholm, found: yes] 8127236.25 ns
+  [Malmö Stockholm, found: yes] 10079720.42 ns
+  [Stockholm Sundsvall, found: yes] 5474405.50 ns
+  [Stockholm Umeå, found: no] 5508272.50 ns
+  [Göteborg Sundsvall, found: no] 7899339.92 ns
+  [Sundsvall Umeå, found: yes] 1910.92 ns
+  [Umeå Göteborg, found: no] 459.17 ns
+  [Göteborg Umeå, found: no] 7941395.33 ns
+  [Malmö Kiruna, found: no] 10080414.50 ns
+
+Benchmarking 'paths' method (max: 350)...
+  [Malmö Göteborg, found: yes] 19761.92 ns
+  [Göteborg Stockholm, found: yes] 39146.17 ns
+  [Malmö Stockholm, found: yes] 25814.42 ns
+  [Stockholm Sundsvall, found: yes] 55515.50 ns
+  [Stockholm Umeå, found: no] 50971.33 ns
+  [Göteborg Sundsvall, found: no] 39193.67 ns
+  [Sundsvall Umeå, found: yes] 1368.33 ns
+  [Umeå Göteborg, found: no] 387.50 ns
+  [Göteborg Umeå, found: no] 36217.83 ns
+  [Malmö Kiruna, found: no] 24759.42 ns
+
+Benchmarking 'paths' method (max: 10000)...
+  [Malmö Göteborg, found: yes] 363330035.75 ns
+  [Göteborg Stockholm, found: yes] 179995313.42 ns
+  [Malmö Stockholm, found: yes] 360260721.75 ns
+  [Stockholm Sundsvall, found: yes] 266259440.00 ns
+  [Stockholm Umeå, found: yes] 378400015.00 ns
+  [Göteborg Sundsvall, found: yes] 332046054.33 ns
+  [Sundsvall Umeå, found: yes] 922260582.67 ns
+  [Umeå Göteborg, found: yes] 340327716.58 ns
+  [Göteborg Umeå, found: yes] 481352785.50 ns
+  [Malmö Kiruna, found: yes] 1528226341.92 ns
+
+Benchmarking 'enhanced paths' method...
+  [Malmö Göteborg, found: yes] 218670066.92 ns
+  [Göteborg Stockholm, found: yes] 15026273.33 ns
+  [Malmö Stockholm, found: yes] 32960383.17 ns
+  [Stockholm Sundsvall, found: yes] 266698347.08 ns
+  [Stockholm Umeå, found: yes] 406943624.33 ns
+  [Göteborg Sundsvall, found: yes] 277172530.92 ns
+  [Sundsvall Umeå, found: yes] 1013747045.67 ns
+  [Umeå Göteborg, found: yes] 221636395.92 ns
+  [Göteborg Umeå, found: yes] 495692421.42 ns
+  [Malmö Kiruna, found: yes] 1164961266.33 ns
+
+How long does it take to find a path from Malmö to:
+  Lund: 550 ns (13 min)
+  Lund: 190 ns (13 min)
+  Hässleholm: 450 ns (43 min)
+  Hässleholm: 320 ns (43 min)
+  Alvesta: 119414080 ns (81 min)
+  Alvesta: 119249617 ns (81 min)
+  Linköping: 274568594 ns (169 min)
+  Linköping: 274738715 ns (169 min)
+  Uppsala: 121052754 ns (324 min)
+  Uppsala: 120906444 ns (324 min)
+  Gävle: 214850693 ns (383 min)
+  Gävle: 214103137 ns (383 min)
+  Sundsvall: 547283289 ns (600 min)
+  Sundsvall: 545975577 ns (600 min)
+  Umeå: 948432529 ns (790 min)
+  Umeå: 947780992 ns (790 min)
+  Luleå: 1408804673 ns (1002 min)
+  Luleå: 1413255084 ns (1002 min)
+  Kiruna: 1160934100 ns (1162 min)
+  Kiruna: 1153493491 ns (1162 min)
+
+real    2m1.567s
+user    2m1.469s
+sys     0m0.000s

@@ -1,22 +1,25 @@
-#include <algorithm>
 #include <stdio.h>
 
 #include "heap_array_queue.h"
 
-using std::swap;
+inline void swap(int& a, int& b) {
+	int c = b;
+	b = a;
+	a = c;
+}
 
 int HeapArrayQueue::push(int value) {
-	if(m_offset + 1 >= m_available_slots) {
+	if(++m_offset == m_available_slots) {
 		m_available_slots = std::max(m_available_slots * 2, 1);
 		m_slots = (int*)realloc(m_slots, m_available_slots * sizeof(int));
 	}
 
-	m_slots[++m_offset] = value;
+	m_slots[m_offset] = value;
 	return bubble(m_offset);
 }
 
 optional<PriorityQueueResult> HeapArrayQueue::pop() {
-	if(!size()) {
+	if(m_offset == -1) {
 		return nullopt;
 	}
 
@@ -32,7 +35,7 @@ optional<PriorityQueueResult> HeapArrayQueue::pop() {
 }
 
 optional<PriorityQueueResult> HeapArrayQueue::increment(int offset) {
-	if(!size()) {
+	if(m_offset == -1) {
 		return nullopt;
 	}
 
@@ -59,11 +62,11 @@ int HeapArrayQueue::sink(int start) {
 		return 0;
 	}
 
-	bool has_left = has_branch(start, false);
-	bool has_right = has_branch(start, true);
-
 	int left = find_branch(start, false);
 	int right = find_branch(start, true);
+
+	bool has_left = m_offset >= left;
+	bool has_right = m_offset >= right;
 
 	/* Condition A: Select left if available, otherwise select right if available, otherwise compare with self (always false) */
 	int sink_to = has_left ? left : (has_right ? right : start);

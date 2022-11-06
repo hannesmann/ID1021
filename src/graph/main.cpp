@@ -31,7 +31,7 @@ long time_ns() {
 		} \
 	}
 
-#define REPEATS 100
+#define REPEATS 3
 
 /* Receives a function optional<d> = F(). */
 void benchmark_shortest_distance(const char* s, std::function<optional<int>()> f) {
@@ -42,7 +42,7 @@ void benchmark_shortest_distance(const char* s, std::function<optional<int>()> f
 		long tstart = time_ns();
 
 		for(int repeat = 0; repeat < REPEATS; repeat++) {
-			found = found || f().has_value();
+			found = f().has_value() || found;
 		}
 
 		long tdiff = time_ns() - tstart;
@@ -97,6 +97,8 @@ int main(int argc, char** argv) {
 		{"Malmö", "Kiruna"}
 	};
 
+	/* TODO: Om det blir 1/2: short circuit i benchmark */
+
 	printf("\nBenchmarking 'naive' method...\n");
 	for(SearchPath& path : paths) {
 		benchmark_shortest_distance((std::string(path.from) + " " + std::string(path.to)).c_str(), [&map, &path]() {
@@ -145,6 +147,13 @@ int main(int argc, char** argv) {
 		long tdiff = time_ns() - tstart;
 
 		printf("  %s: %ld ns (%d min)\n", city, tdiff, distance);
+
+		 tstart = time_ns();
+		 distance = find_shortest_path_enhanced({map.table().get("Malmö"), map.table().get(city)}).value_or(-1);
+		 tdiff = time_ns() - tstart;
+
+		printf("  %s: %ld ns (%d min)\n", city, tdiff, distance);
+
 	}
 
 	return 0;
